@@ -9,13 +9,24 @@
 1. 完成开发者申请后，会出现「开发者模式」这个插件的安装选项，安装它并准备好SSH客户端软件，Windows平台推荐[putty](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)
 
 ## 开始安装
-1. 进入极路由的ssh
-1. 执行一键安装命令：curl -# easucks.cn/i.sh|sh
-1. 无需重启，直接进入极路由后台首页找到入口按钮
+进入极路由的ssh，执行一键安装命令：
+```
+curl -# easucks.cn/i.sh|sh
+```
 
 ## 如何卸载
-1. 推荐直接恢复出厂，简单干净。
-1. 或者进入极路由的ssh，执行一键卸载命令：cat /lib/upgrade/keep.d/easucks|xargs rm&&mv /usr/lib/lua/luci/view/admin_web/home.backup /usr/lib/lua/luci/view/admin_web/home.htm
+* 推荐直接恢复出厂，简单干净。
+* 或者进入极路由的ssh，执行卸载命令：
+```
+cat /lib/upgrade/keep.d/easucks|xargs rm
+mv /usr/lib/lua/luci/view/admin_web/home.backup /usr/lib/lua/luci/view/admin_web/home.htm
+```
+
+## TODO List
+* 保存多个SS的功能
+* 域名白名单功能
+* 区分自定义和傻瓜式两种界面
+* 显示FIFA相关的网络连接
 
 ## 如何反馈
 * 既然是在github看到的，那就提交Issues吧
