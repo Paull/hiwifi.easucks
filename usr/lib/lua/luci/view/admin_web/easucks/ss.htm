@@ -1,0 +1,114 @@
+<%
+--[[
+    Info    FIFA助手插件动态功能调用
+    Author    Paull <paull@qq.com>
+    Copyright    2016
+]]--
+
+local json = ''
+
+local dnsmasq_script = '/etc/init.d/dnsmasq'
+local ss_init_script = '/etc/init.d/easucks'
+local ss_binary_path = '/usr/bin/ss-redir'
+local ss_config_path = '/etc/config/easucks'
+
+local act = luci.http.formvalue('act')
+local ss_server_ipad = luci.http.formvalue('ss_server_ipad')
+local ss_server_port = luci.http.formvalue('ss_server_port')
+local ss_server_pass = luci.http.formvalue('ss_server_pass')
+local ss_server_meth = luci.http.formvalue('ss_server_meth')
+local ss_server_auth = luci.http.formvalue('ss_server_auth')
+local ss_server_fsop = luci.http.formvalue('ss_server_fsop')
+local ss_runnin_mode = luci.http.formvalue('ss_runnin_mode')
+local ss_remote_dnss = luci.http.formvalue('ss_remote_dnss')
+local ss_local_port = luci.http.formvalue('ss_local_port')
+
+local my_list = '/etc/easucks/my.list'
+local gfw_list = '/etc/easucks/gfw.list'
+local ignore_mac_list = '/etc/easucks/ignore.mac'
+action = {
+    -- 获取运行信息
+    ['status'] = function()
+        local ss_state = luci.sys.exec('if [ "`ps | grep '..ss_binary_path..' | grep -c -v grep`" == "1" ]; then echo -n "running"; else echo -n "stoped"; fi;')
+        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true;else echo -n false;fi")
+        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'"}'
+    end,
+    -- 获取配置信息
+    ['config'] = function()
+        local ss_config = luci.sys.exec("uci show easucks | sed 's/easucks.//g' | awk -F= '{config[$1]=$2;}END{print \"{\"; for(i in config){print \"\\42\"i\"\\42: \\42\"config[i]\"\\42,\"} print \"}\"}' | tr '\\n' ' ' | sed 's/, }/}/g'")
+        json = ss_config
+    end,
+    -- 保存服务
+    ['save'] = function()
+        luci.sys.exec('touch '..ss_config_path..';')
+        luci.sys.exec('uci set easucks.ss_server_ipad='..ss_server_ipad..';')
+        luci.sys.exec('uci set easucks.ss_server_port='..ss_server_port..';')
+        luci.sys.exec('uci set easucks.ss_server_pass='..ss_server_pass..';')
+        luci.sys.exec('uci set easucks.ss_server_meth='..ss_server_meth..';')
+        luci.sys.exec('uci set easucks.ss_server_auth='..ss_server_auth..';')
+        luci.sys.exec('uci set easucks.ss_server_fsop='..ss_server_fsop..';')
+        luci.sys.exec('uci set easucks.ss_runnin_mode='..ss_runnin_mode..';')
+        luci.sys.exec('uci set easucks.ss_remote_dnss='..ss_remote_dnss..';')
+        luci.sys.exec('uci set easucks.ss_local_port='..ss_local_port..';')
+        luci.sys.exec('uci commit;')
+        json = '{"state": 1}'
+    end,
+    -- 启动服务
+    ['start'] = function()
+        luci.sys.exec(ss_init_script..' start')
+        json = '{"state": 1}'
+    end,
+    -- 停止服务
+    ['stop'] = function()
+        luci.sys.exec(ss_init_script..' stop')
+        json = '{"state": 1}'
+    end,
+    -- 是否开机自动启动服务
+    ['service'] = function()
+        service = luci.http.formvalue('service')
+        -- 启用或禁用服务
+        luci.sys.exec(ss_init_script..' '..service)
+        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true;else echo -n false;fi")
+        json = '{"state": 1, "ss_enabled": "'..ss_enabled..'"}'
+    end,
+    -- 读取内置域名
+    ['gfwlist'] = function()
+        json = luci.sys.exec('cat '..gfw_list)
+    end,
+    -- 读取自定义域名
+    ['mylist'] = function()
+        json = luci.sys.exec('cat '..my_list)
+    end,
+    -- 保存自定义域名
+    ['mylist_save'] = function()
+        list = luci.http.formvalue('list')
+        local temp = io.output()
+        io.output(my_list)
+        io.write(list)
+        io.output():close()
+        io.output(temp)
+        luci.sys.exec(dnsmasq_script..' restart')
+        json = '{"state": 1}'
+    end,
+    -- 读取mac过滤列表
+    ['ignoremaclist'] = function()
+        json = luci.sys.exec('cat '..ignore_mac_list)
+    end,
+    -- 保存mac过滤列表
+    ['ignoremaclist_save'] = function()
+        list = luci.http.formvalue('list')
+        local temp = io.output()
+        io.output(ignore_mac_list)
+        io.write(list)
+        io.output():close()
+        io.output(temp)
+        luci.sys.exec(dnsmasq_script..' restart')
+        json = '{"state": 1}'
+    end
+}
+if action[act] then
+    action[act]()
+else
+    json = '{"state": 0, "msg": "不支持的命令"}'
+end
+%><%=json%>

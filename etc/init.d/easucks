@@ -1,0 +1,187 @@
+#!/bin/sh  /etc/rc.common
+START=99
+STOP=99
+
+NAME=easucks
+DESC="socks5 proxy redirector"
+DAEMON=/usr/bin/ss-redir
+PIDFILE=/var/run/$NAME.pid
+CONFIGFILE=/tmp/$NAME/config.json
+DNSMASQ_CONFIG_DIR=/tmp/dnsmasq.d
+
+ss_get_config() {
+    lanip=$(uci get network.lan.ipaddr)
+    source /lib/functions/network.sh
+    network_get_ipaddr wanip wan
+
+    ss_server_ipad=$(uci get $NAME.ss_server_ipad)
+    ss_server_port=$(uci get $NAME.ss_server_port)
+    ss_server_pass=$(uci get $NAME.ss_server_pass)
+    ss_server_meth=$(uci get $NAME.ss_server_meth)
+    ss_runnin_mode=$(uci get $NAME.ss_runnin_mode)
+    ss_remote_dnss=$(uci get $NAME.ss_remote_dnss)
+    ss_server_auth=$(uci get $NAME.ss_server_auth)
+    ss_server_fsop=$(uci get $NAME.ss_server_fsop)
+
+    ss_local_port=$(uci get $NAME.ss_local_port)
+}
+
+ss_create_config_file(){
+    mkdir -p /tmp/$NAME/
+    cat > $CONFIGFILE << EOF
+{
+    "server": "$ss_server_ipad",
+    "server_port": $ss_server_port,
+    "local_address": "$lanip",
+    "local_port": $ss_local_port,
+    "password": "$ss_server_pass",
+    "method": "$ss_server_meth",
+    "timeout": 60,
+    "auth": $ss_server_auth,
+    "fast_open": $ss_server_fsop,
+    "mode": "tcp_only"
+}
+EOF
+}
+
+ss_iptables_add() {
+    iptables -t nat -N $NAME
+    iptables -t nat -A PREROUTING -i br-lan -j $NAME
+    iptables -t nat -A $NAME -m salist --salist local --match-dip -j RETURN
+    iptables -t nat -A $NAME -m salist --salist hiwifi --match-dip -j RETURN
+    iptables -t nat -A $NAME -d $lanip/24 -j RETURN
+    iptables -t nat -A $NAME -d $wanip/24 -j RETURN
+    iptables -t nat -A $NAME -d $ss_server_ipad/32 -j RETURN
+    iptables -t nat -N $NAME-mode
+    iptables -t nat -A $NAME -p tcp -j $NAME-mode
+
+    iptables -t nat -N $NAME-ppp
+    iptables -t nat -A PREROUTING -i ppp+ -j $NAME-ppp
+    iptables -t nat -A $NAME-ppp -i pppoe-wan -j RETURN
+    iptables -t nat -A $NAME-ppp -m salist --salist local --match-dip -j RETURN
+    iptables -t nat -A $NAME-ppp -m salist --salist hiwifi --match-dip -j RETURN
+    iptables -t nat -A $NAME-ppp -d $lanip/24 -j RETURN
+    iptables -t nat -A $NAME-ppp -d $wanip/24 -j RETURN
+    iptables -t nat -A $NAME-ppp -d $ss_server_ipad/32 -j RETURN
+    iptables -t nat -N $NAME-ppp-mode
+    iptables -t nat -A $NAME-ppp -p tcp -j $NAME-ppp-mode
+
+    iptables -t nat -N $NAME-OUTPUT
+    iptables -t nat -A OUTPUT -p tcp -j $NAME-OUTPUT
+    iptables -t nat -A $NAME-OUTPUT -m salist --salist local --match-dip -j RETURN
+    iptables -t nat -A $NAME-OUTPUT -m salist --salist hiwifi --match-dip -j RETURN
+    iptables -t nat -A $NAME-OUTPUT -d $lanip/24 -j RETURN
+    iptables -t nat -A $NAME-OUTPUT -d $wanip/24 -j RETURN
+    iptables -t nat -A $NAME-OUTPUT -d $ss_server_ipad/32 -j RETURN
+    iptables -t nat -A $NAME-OUTPUT -d $ss_remote_dnss -p tcp --dport 53 -j DNAT --to-destination $lanip:$ss_local_port
+    iptables -t nat -N $NAME-OUTPUT-mode
+    iptables -t nat -A $NAME-OUTPUT -p tcp -j $NAME-OUTPUT-mode
+
+    case $ss_runnin_mode in
+        gfwlist)
+            [ $(ipset list gfwlist 2>/dev/null| wc -l) -eq 0 ] && { ipset -N gfwlist iphash; }
+            ipset flush gfwlist
+            iptables -t nat -A $NAME-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-ppp-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+            # 生成gfwlist.conf
+            awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
+            # 生成自定义域名mylist.conf
+            sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
+            awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/mylist.conf
+            ;;
+        game)
+            iptables -t nat -A $NAME-mode -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-ppp-mode -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-OUTPUT-mode -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-ppp-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            ;;
+        web)
+            iptables -t nat -A $NAME-mode -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-ppp-mode -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-OUTPUT-mode -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-ppp-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-ppp-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            ;;
+        all)
+            iptables -t nat -A $NAME-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-ppp-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            ;;
+    esac
+
+    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.mac
+    local black_mac
+    awk '{print $0}' /etc/$NAME/ignore.mac |
+    while read black_mac; do
+        [ -z "$black_mac" ] && continue
+        iptables -t nat -I $NAME-mode -m mac --mac-source $black_mac -j RETURN
+    done
+
+}
+
+ss_iptables_del() {
+    /usr/bin/vendor/bin/dnsmask.sh stop
+    iptables -t nat -D PREROUTING -i br-lan -j $NAME 1>/dev/null 2>&1
+    iptables -t nat -F $NAME 1>/dev/null 2>&1
+    iptables -t nat -X $NAME 1>/dev/null 2>&1
+    iptables -t nat -D $NAME -p tcp -j $NAME-mode 1>/dev/null 2>&1
+    iptables -t nat -F $NAME-mode 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-mode 1>/dev/null 2>&1
+
+    iptables -t nat -D PREROUTING -i ppp+ -j $NAME-ppp 1>/dev/null 2>&1
+    iptables -t nat -F $NAME-ppp 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-ppp 1>/dev/null 2>&1
+    iptables -t nat -D $NAME-ppp -p tcp -j $NAME-ppp-mode 1>/dev/null 2>&1
+    iptables -t nat -F $NAME-ppp-mode 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-ppp-mode 1>/dev/null 2>&1
+
+    iptables -t nat -D OUTPUT -p tcp -j $NAME-OUTPUT 1>/dev/null 2>&1
+    iptables -t nat -F $NAME-OUTPUT 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-OUTPUT 1>/dev/null 2>&1
+    iptables -t nat -D $NAME-OUTPUT -p tcp -j $NAME-OUTPUT-mode 1>/dev/null 2>&1
+    iptables -t nat -F $NAME-OUTPUT-mode 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-OUTPUT-mode 1>/dev/null 2>&1
+}
+
+ss_get_config
+
+start() {
+    insmod ipt_REDIRECT 2>/dev/null
+    ss_create_config_file
+    $DAEMON -c $CONFIGFILE -f $PIDFILE
+
+    # 生成gfwlist.conf
+    awk '{print "server=/."$1"/127.0.0.1#1053"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
+    # 生成自定义域名mylist.conf
+    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
+    awk '{print "server=/."$1"/127.0.0.1#1053"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/mylist.conf
+
+    ss_iptables_add
+
+    /etc/init.d/dnsmasq restart
+    /etc/init.d/pdnsd start
+}
+
+stop() {
+    ss_iptables_del
+
+    rm -rf $CONFIGFILE
+    if [ -f $PIDFILE ]; then
+        kill -9 `cat $PIDFILE`
+        rm -f $PIDFILE
+    fi
+    kill -9 `ps | grep "$DAEMON -c $CONFIGFILE" | grep -v grep | awk '{print $1}'` 2>/dev/null
+
+    #删除gfwlist模式生成的域名列表
+    rm -f $DNSMASQ_CONFIG_DIR/gfwlist.conf
+    rm -f $DNSMASQ_CONFIG_DIR/mylist.conf
+    #官方dnsmasq重启时自动停止pdnsd
+    /etc/init.d/dnsmasq restart
+}

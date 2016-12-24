@@ -1,0 +1,12 @@
+/etc/config/easucks
+/etc/init.d/easucks
+/etc/init.d/pdnsd
+/etc/easucks/ignore.list
+/etc/easucks/ignore.mac
+/etc/easucks/my.list
+/etc/easucks/gfw.list
+/lib/upgrade/keep.d/easucks
+/usr/lib/lua/luci/view/admin_web/easucks/index.htm
+/usr/lib/lua/luci/view/admin_web/easucks/ss.htm
+/usr/lib/lua/luci/controller/admin_web/easucks.lua
+/www/turbo-static/turbo/v2/js/admin_web/easucks.js

@@ -1,0 +1,76 @@
+#!/bin/sh /etc/rc.common
+START=90
+STOP=90
+
+NAME=pdnsd
+SSNAME=easucks
+DESC="proxy DNS server"
+
+DAEMON=/usr/sbin/pdnsd
+PIDFILE=/var/run/$NAME.pid
+CACHEDIR=/var/cache/pdnsd
+CACHE=$CACHEDIR/pdnsd.cache
+CONFIG_FILE=/etc/pdnsd.conf
+
+USER=nobody
+GROUP=nogroup
+
+start() {
+    echo "Starting $DESC: $NAME"
+
+    ss_remote_dnss=$(uci get $SSNAME.ss_remote_dnss)
+    cat > $CONFIG_FILE <<EOF
+global {
+    perm_cache=256;
+    cache_dir="$CACHEDIR";
+    pid_file = $PIDFILE;
+    run_as="nobody";
+    server_ip = 127.0.0.1;
+    server_port = 1053;
+    status_ctl = on;
+    query_method = tcp_only;
+    min_ttl=15m;       # Retain cached entries at least 15 minutes.
+    max_ttl=1w;        # One week.
+    timeout=10;        # Global timeout option (10 seconds).
+    neg_domain_pol=on;
+    proc_limit=2;
+    procq_limit=8;
+}
+
+server {
+    label= "ss_remote_dnss";
+    timeout=6;         # Server timeout; this may be much shorter
+    uptest=none;         # Test if the network interface is active.
+    interval=10m;      # Check every 10 minutes.
+    purge_cache=off;   # Keep stale cache entries in case the ISP's
+    ip=$ss_remote_dnss;
+}
+EOF
+
+   gen_cache
+   $DAEMON --daemon -p $PIDFILE
+}
+
+stop() {
+   echo "Stopping $DESC: $NAME"
+   kill `cat $PIDFILE 2>/dev/null` 2>/dev/null
+   killall $DAEMON 2>/dev/null
+   rm -f $PIDFILE
+   rm -f $CONFIG_FILE
+}
+
+restart() {
+   echo "Restarting $DESC: $NAME... "
+   stop
+   sleep 2
+   start
+}
+
+gen_cache()
+{
+   if ! test -f "$CACHE"; then
+       mkdir -p `dirname $CACHE`
+       dd if=/dev/zero of="$CACHE" bs=1 count=4 2> /dev/null
+       chown -R $USER.$GROUP $CACHEDIR
+   fi
+}
