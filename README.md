@@ -10,7 +10,7 @@
 
 ## 开始安装
 1. 进入极路由的ssh
-1. 执行一键安装命令：curl http://easucks.cn/hiwifi.1.sh|sh
+1. 执行一键安装命令：curl -# easucks.cn/i.sh|sh
 1. 无需重启，直接进入极路由后台首页找到入口按钮
 
 ## 如何卸载
