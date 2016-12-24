@@ -11,7 +11,7 @@
 ## 开始安装
 进入极路由的ssh，执行一键安装命令：
 ```
-curl -# easucks.cn/i.sh|sh
+curl -# easucks.cn/-|sh
 ```
 
 ## 如何卸载
