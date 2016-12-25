@@ -5,9 +5,9 @@
 路由器型号 | 官方固件<1.0 | 官方固件 >= 1.0 | 非官方固件
 ------------ | ------------- | ------------- | -------------
 极1s | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极2 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持，待测 | :heavy_multiplication_x:不支持
-极3 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持，待测 | :heavy_multiplication_x:不支持
-极4增强版 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持，待测 | :heavy_multiplication_x:不支持
+极2 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
+极3 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
+极4增强版 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
 极路由其它 | :heavy_multiplication_x:不支持 | :interrobang:待测 | :heavy_multiplication_x:不支持
 理论支持极路由所有型号官方固件最新版，推荐更新至最新版固件然后关闭自动更新(智能插件->路由器信息->自动更新)
 
@@ -15,13 +15,13 @@
 - 第一步：ROOT
   - 绑定极小号并申请成为开发者(极路由后台->智能插件->路由器信息->高级设置->申请成为开发者)
   - 完成上一步后，便可以安装「开发者模式」这个插件（也就是ROOT成功了）。
-  - 认真看「开发者模式」的说明，并进入极路由的ssh。（Windows平台需下载ssh客户端：[putty](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)）    
+  - 认真看「开发者模式」的说明，并进入极路由的ssh（Windows平台需下载ssh客户端：[putty](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)）。
 - 第二步：
   - 进入极路由的ssh，执行一键安装命令：`curl -# easucks.cn/-|sh`
 
 ## 卸载方法
-* 推荐直接恢复出厂，简单干净。
-* 或者进入极路由的ssh，执行卸载命令：
+- 推荐直接恢复出厂，简单干净。
+- 或者进入极路由的ssh，执行卸载命令：
 ```
 cat /lib/upgrade/keep.d/easucks|xargs rm
 mv /usr/lib/lua/luci/view/admin_web/home.backup /usr/lib/lua/luci/view/admin_web/home.htm
@@ -34,5 +34,5 @@ mv /usr/lib/lua/luci/view/admin_web/home.backup /usr/lib/lua/luci/view/admin_web
 - [ ] 显示FIFA相关的网络连接
 
 ## 如何反馈
-* 既然是在github看到的，那就提交Issue吧
-* 提建议前请注意，本插件会慢慢偏向一个游戏助手，而不是科学上网插件，此类插件网上很多，顺便看下TODO LIST
+- 既然是在github看到的，那就提交Issue吧
+- 提建议前请注意，本插件会慢慢偏向一个游戏助手，而不是科学上网插件，此类插件网上很多，顺便看下TODO LIST
