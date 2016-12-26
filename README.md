@@ -29,6 +29,7 @@
 ```
 cat /lib/upgrade/keep.d/easucks|xargs rm
 mv /usr/lib/lua/luci/view/admin_web/home.backup /usr/lib/lua/luci/view/admin_web/home.htm
+mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/admin_web/network/index.htm
 ```
 
 ## TODO LIST
