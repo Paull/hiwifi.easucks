@@ -122,6 +122,7 @@ $(function () {
     function getSSstatus() {
         $.post('easucks/ss', {'act': 'status'}, function(data){
             SS['status'] = data;
+            SS['formdata'] = $("#ss_setup form").serialize();
 
             if(data.ss_enabled == 'true'){
                 $('#ss_auto_start').removeClass('off').addClass('on');
@@ -420,18 +421,36 @@ $(function () {
         if ($bt.hasClass('disable')) {
             return;
         }
+        var $form = $("#ss_setup form");
+        if (!$form.valid()) {
+            $bt.removeClass("disable");
+            return;
+        }
         $bt.addClass("disable");
-        $bt.text('重启中...');
-        var request_data = {'act': 'restart'};
-        $.post('easucks/ss', request_data, function(data){
-            getSSstatus();
-            HiWiFi.popDialog({
-                type: "G-text",
-                title: data['state'] ? '重启成功' : '出错了!',
-                content: ""
-            }).time(1500);
-            $bt.removeClass("disable").text('重启');
-        }, 'json');
+        var ss_restart = function(){
+            $bt.text('重启中...');
+            var request_data = {'act': 'restart'};
+            $.post('easucks/ss', request_data, function(data){
+                getSSstatus();
+                HiWiFi.popDialog({
+                    type: "G-text",
+                    title: data['state'] ? '重启成功' : '出错了!',
+                    content: ""
+                }).time(1500);
+                $bt.removeClass("disable").text('重启');
+            }, 'json');
+        };
+        if ($("#ss_setup form").serialize() != SS['formdata']) {
+            $bt.text(HiWiFi.i18n.prop("g_retaining"));
+            var request_data = $form.serializeArray();
+            request_data = HiWiFi.simplifyJSON(request_data);
+            request_data['act'] = 'save';
+            $.post('easucks/ss', request_data, function(data){
+                ss_restart();
+            });
+        }else{
+            ss_restart();
+        }
     });
 
     //SS 启动按钮
@@ -440,18 +459,36 @@ $(function () {
         if ($bt.hasClass('disable')) {
             return;
         }
+        var $form = $("#ss_setup form");
+        if (!$form.valid()) {
+            $bt.removeClass("disable");
+            return;
+        }
         $bt.addClass("disable");
-        $bt.text(HiWiFi.i18n.prop("g_startting"));
-        var request_data = {'act': 'start'};
-        $.post('easucks/ss', request_data, function(data){
-            getSSstatus();
-            HiWiFi.popDialog({
-                type: "G-text",
-                title: data['state'] ? '启动成功' : '出错了!',
-                content: ""
-            }).time(1500);
-            $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_start"));
-        }, 'json');
+        var ss_start = function(){
+            $bt.text(HiWiFi.i18n.prop("g_startting"));
+            var request_data = {'act': 'start'};
+            $.post('easucks/ss', request_data, function(data){
+                getSSstatus();
+                HiWiFi.popDialog({
+                    type: "G-text",
+                    title: data['state'] ? '启动成功' : '出错了!',
+                    content: ""
+                }).time(1500);
+                $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_start"));
+            }, 'json');
+        };
+        if ($("#ss_setup form").serialize() != SS['formdata']) {
+            $bt.text(HiWiFi.i18n.prop("g_retaining"));
+            var request_data = $form.serializeArray();
+            request_data = HiWiFi.simplifyJSON(request_data);
+            request_data['act'] = 'save';
+            $.post('easucks/ss', request_data, function(data){
+                ss_start();
+            });
+        }else{
+            ss_start();
+        }
     });
 
     //SS 停止按钮
