@@ -48,8 +48,9 @@ server {
     purge_cache = off;
 }
 EOF
-   gen_cache
-   $DAEMON --daemon -p $PIDFILE
+    gen_cache
+    $DAEMON --daemon -p $PIDFILE
+    chmod 644 $CONFIG_FILE
 }
 
 stop() {

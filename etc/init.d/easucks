@@ -11,8 +11,6 @@ DNSMASQ_CONFIG_DIR=/tmp/dnsmasq.d
 
 ss_get_config() {
     lanip=$(uci get network.lan.ipaddr)
-    source /lib/functions/network.sh
-    network_get_ipaddr wanip wan
 
     ss_server_ipad=$(uci get $NAME.ss_server_ipad)
     ss_server_port=$(uci get $NAME.ss_server_port)
@@ -45,20 +43,14 @@ EOF
 }
 
 ss_iptables_add() {
-    iptables -t nat -N $NAME-PRERUT
-    iptables -t nat -A PREROUTING -i br-lan -j $NAME-PRERUT
-    iptables -t nat -A $NAME-PRERUT -m salist --salist local --match-dip -j RETURN
-    iptables -t nat -A $NAME-PRERUT -m salist --salist hiwifi --match-dip -j RETURN
-    iptables -t nat -A $NAME-PRERUT -d $lanip/24 -j RETURN
-    iptables -t nat -A $NAME-PRERUT -d $wanip/24 -j RETURN
-    iptables -t nat -A $NAME-PRERUT -d $ss_server_ipad/32 -j RETURN
-
+    iptables -t nat -N $NAME-PREROUTING
     iptables -t nat -N $NAME-OUTPUT
+    iptables -t nat -A PREROUTING -i br-lan -j $NAME-PREROUTING
     iptables -t nat -A OUTPUT -p tcp -j $NAME-OUTPUT
-    iptables -t nat -A $NAME-OUTPUT -m salist --salist local --match-dip -j RETURN
-    iptables -t nat -A $NAME-OUTPUT -m salist --salist hiwifi --match-dip -j RETURN
-    iptables -t nat -A $NAME-OUTPUT -d $lanip/24 -j RETURN
-    iptables -t nat -A $NAME-OUTPUT -d $wanip/24 -j RETURN
+
+    iptables -t nat -A $NAME-PREROUTING -m set --match-set local dst -j RETURN
+    iptables -t nat -A $NAME-OUTPUT -m set --match-set local dst -j RETURN
+    iptables -t nat -A $NAME-PREROUTING -d $ss_server_ipad/32 -j RETURN
     iptables -t nat -A $NAME-OUTPUT -d $ss_server_ipad/32 -j RETURN
     iptables -t nat -A $NAME-OUTPUT -d $ss_remote_dnss -p tcp --dport 53 -j DNAT --to-destination $lanip:$ss_local_port
 
@@ -68,36 +60,39 @@ ss_iptables_add() {
             [ $(ipset list ignorelist 2>/dev/null| wc -l) -eq 0 ] && { ipset -N ignorelist iphash; }
             ipset flush gfwlist
             ipset flush ignorelist
-            iptables -t nat -I $NAME-PRERUT -p udp --dport 53 -j DNAT --to-destination $lanip:53
-            iptables -t nat -I $NAME-PRERUT -p tcp -m set --match-set ignorelist dst -j RETURN
-            iptables -t nat -I $NAME-OUTPUT -p tcp -m set --match-set ignorelist dst -j RETURN
-            iptables -t nat -A $NAME-PRERUT -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+
+            # 注意：gfwlist模式会劫持DNS
+            iptables -t nat -A $NAME-PREROUTING -p udp -m udp --dport 53 -j REDIRECT --to-ports 53
+            iptables -t nat -A $NAME-PREROUTING -m set --match-set ignorelist dst -j RETURN
+            iptables -t nat -A $NAME-OUTPUT -m set --match-set ignorelist dst -j RETURN
+            iptables -t nat -A $NAME-PREROUTING -p tcp -m set --match-set gfwlist dst -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+
             # 生成gfwlist.conf
-            awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
+            awk '{print "ipset=/"$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
             # 生成强制走代理域名列表force_list.conf
             sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-            awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/force_list.conf
+            awk '{print "ipset=/"$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/force_list.conf
             # 生成强制不走代理域名列表ignore_list.conf
             sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.list
-            awk '{print "ipset=/."$1"/ignorelist"}' /etc/$NAME/ignore.list >> $DNSMASQ_CONFIG_DIR/ignore_list.conf
+            awk '{print "ipset=/"$1"/ignorelist"}' /etc/$NAME/ignore.list >> $DNSMASQ_CONFIG_DIR/ignore_list.conf
             ;;
         game)
-            iptables -t nat -A $NAME-PRERUT -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-OUTPUT -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-PRERUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PREROUTING -m set --match-set china dst -j RETURN
+            iptables -t nat -A $NAME-OUTPUT -m set --match-set china dst -j RETURN
+            iptables -t nat -A $NAME-PREROUTING -p tcp -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             ;;
         web)
-            iptables -t nat -A $NAME-PRERUT -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-OUTPUT -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-PRERUT -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PREROUTING -m set --match-set china dst -j RETURN
+            iptables -t nat -A $NAME-OUTPUT -m set --match-set china dst -j RETURN
+            iptables -t nat -A $NAME-PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-PRERUT -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
             ;;
         all)
-            iptables -t nat -A $NAME-PRERUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PREROUTING -p tcp -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             ;;
     esac
@@ -107,19 +102,17 @@ ss_iptables_add() {
     awk '{print $0}' /etc/$NAME/ignore.mac |
     while read black_mac; do
         [ -z "$black_mac" ] && continue
-        iptables -t nat -I $NAME-PRERUT -m mac --mac-source $black_mac -j RETURN
+        iptables -t nat -I $NAME-PREROUTING -m mac --mac-source $black_mac -j RETURN
     done
 
 }
 
 ss_iptables_del() {
-    iptables -t nat -D $NAME-PRERUT -p udp --dport 53 -j DNAT --to-destination $lanip:53 1>/dev/null 2>&1
-
-    iptables -t nat -D PREROUTING -i br-lan -j $NAME-PRERUT 1>/dev/null 2>&1
+    iptables -t nat -D PREROUTING -i br-lan -j $NAME-PREROUTING 1>/dev/null 2>&1
     iptables -t nat -D OUTPUT -p tcp -j $NAME-OUTPUT 1>/dev/null 2>&1
 
-    iptables -t nat -F $NAME-PRERUT 1>/dev/null 2>&1
-    iptables -t nat -X $NAME-PRERUT 1>/dev/null 2>&1
+    iptables -t nat -F $NAME-PREROUTING 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-PREROUTING 1>/dev/null 2>&1
     iptables -t nat -F $NAME-OUTPUT 1>/dev/null 2>&1
     iptables -t nat -X $NAME-OUTPUT 1>/dev/null 2>&1
 }
@@ -132,13 +125,13 @@ start() {
     $DAEMON -c $CONFIGFILE -f $PIDFILE
 
     # 生成gfwlist.conf
-    awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
+    awk '{print "server=/"$1"/127.0.0.1#54"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
     # 生成强制走代理域名列表force_list.conf
     sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-    awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/force_list.conf
+    awk '{print "server=/"$1"/127.0.0.1#54"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/force_list.conf
     # 生成强制不走代理域名列表ignore_list.conf
     sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.list
-    awk '{print "server=/."$1"/#"}' /etc/$NAME/ignore.list > $DNSMASQ_CONFIG_DIR/ignore_list.conf
+    awk '{print "server=/"$1"/#"}' /etc/$NAME/ignore.list > $DNSMASQ_CONFIG_DIR/ignore_list.conf
 
     ss_iptables_add
 
@@ -156,9 +149,10 @@ stop() {
     fi
     kill -9 `ps | grep "$DAEMON -c $CONFIGFILE" | grep -v grep | awk '{print $1}'` 2>/dev/null
 
-    #删除gfwlist模式生成的域名列表
+    #删除针对dnsmasq生成的域名列表
     rm -f $DNSMASQ_CONFIG_DIR/gfwlist.conf
-    rm -f $DNSMASQ_CONFIG_DIR/mylist.conf
+    rm -f $DNSMASQ_CONFIG_DIR/force_list.conf
+    rm -f $DNSMASQ_CONFIG_DIR/ignore_list.conf
     #官方dnsmasq重启时自动停止pdnsd
     /etc/init.d/dnsmasq restart
 }
