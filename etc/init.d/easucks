@@ -45,15 +45,13 @@ EOF
 }
 
 ss_iptables_add() {
-    iptables -t nat -N $NAME
-    iptables -t nat -A PREROUTING -i br-lan -j $NAME
-    iptables -t nat -A $NAME -m salist --salist local --match-dip -j RETURN
-    iptables -t nat -A $NAME -m salist --salist hiwifi --match-dip -j RETURN
-    iptables -t nat -A $NAME -d $lanip/24 -j RETURN
-    iptables -t nat -A $NAME -d $wanip/24 -j RETURN
-    iptables -t nat -A $NAME -d $ss_server_ipad/32 -j RETURN
-    iptables -t nat -N $NAME-mode
-    iptables -t nat -A $NAME -p tcp -j $NAME-mode
+    iptables -t nat -N $NAME-PRERUT
+    iptables -t nat -A PREROUTING -i br-lan -j $NAME-PRERUT
+    iptables -t nat -A $NAME-PRERUT -m salist --salist local --match-dip -j RETURN
+    iptables -t nat -A $NAME-PRERUT -m salist --salist hiwifi --match-dip -j RETURN
+    iptables -t nat -A $NAME-PRERUT -d $lanip/24 -j RETURN
+    iptables -t nat -A $NAME-PRERUT -d $wanip/24 -j RETURN
+    iptables -t nat -A $NAME-PRERUT -d $ss_server_ipad/32 -j RETURN
 
     iptables -t nat -N $NAME-OUTPUT
     iptables -t nat -A OUTPUT -p tcp -j $NAME-OUTPUT
@@ -63,15 +61,14 @@ ss_iptables_add() {
     iptables -t nat -A $NAME-OUTPUT -d $wanip/24 -j RETURN
     iptables -t nat -A $NAME-OUTPUT -d $ss_server_ipad/32 -j RETURN
     iptables -t nat -A $NAME-OUTPUT -d $ss_remote_dnss -p tcp --dport 53 -j DNAT --to-destination $lanip:$ss_local_port
-    iptables -t nat -N $NAME-OUTPUT-mode
-    iptables -t nat -A $NAME-OUTPUT -p tcp -j $NAME-OUTPUT-mode
 
     case $ss_runnin_mode in
         gfwlist)
             [ $(ipset list gfwlist 2>/dev/null| wc -l) -eq 0 ] && { ipset -N gfwlist iphash; }
             ipset flush gfwlist
-            iptables -t nat -A $NAME-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-OUTPUT-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -I $NAME-PRERUT -p udp --dport 53 -j DNAT --to-destination $lanip:53
+            iptables -t nat -A $NAME-PRERUT -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
             # 生成gfwlist.conf
             awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
             # 生成自定义域名mylist.conf
@@ -79,22 +76,22 @@ ss_iptables_add() {
             awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/mylist.conf
             ;;
         game)
-            iptables -t nat -A $NAME-mode -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-OUTPUT-mode -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-OUTPUT-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PRERUT -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-OUTPUT -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-PRERUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             ;;
         web)
-            iptables -t nat -A $NAME-mode -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-OUTPUT-mode -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-OUTPUT-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-OUTPUT-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PRERUT -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-OUTPUT -m salist --salist china --match-dip -j RETURN
+            iptables -t nat -A $NAME-PRERUT -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PRERUT -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
             ;;
         all)
-            iptables -t nat -A $NAME-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-OUTPUT-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-PRERUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            iptables -t nat -A $NAME-OUTPUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             ;;
     esac
 
@@ -103,26 +100,21 @@ ss_iptables_add() {
     awk '{print $0}' /etc/$NAME/ignore.mac |
     while read black_mac; do
         [ -z "$black_mac" ] && continue
-        iptables -t nat -I $NAME-mode -m mac --mac-source $black_mac -j RETURN
+        iptables -t nat -I $NAME-PRERUT -m mac --mac-source $black_mac -j RETURN
     done
 
 }
 
 ss_iptables_del() {
-    /usr/bin/vendor/bin/dnsmask.sh stop
-    iptables -t nat -D PREROUTING -i br-lan -j $NAME 1>/dev/null 2>&1
-    iptables -t nat -F $NAME 1>/dev/null 2>&1
-    iptables -t nat -X $NAME 1>/dev/null 2>&1
-    iptables -t nat -D $NAME -p tcp -j $NAME-mode 1>/dev/null 2>&1
-    iptables -t nat -F $NAME-mode 1>/dev/null 2>&1
-    iptables -t nat -X $NAME-mode 1>/dev/null 2>&1
+    iptables -t nat -D $NAME-PRERUT -p udp --dport 53 -j DNAT --to-destination $lanip:53 1>/dev/null 2>&1
 
+    iptables -t nat -D PREROUTING -i br-lan -j $NAME-PRERUT 1>/dev/null 2>&1
     iptables -t nat -D OUTPUT -p tcp -j $NAME-OUTPUT 1>/dev/null 2>&1
+
+    iptables -t nat -F $NAME-PRERUT 1>/dev/null 2>&1
+    iptables -t nat -X $NAME-PRERUT 1>/dev/null 2>&1
     iptables -t nat -F $NAME-OUTPUT 1>/dev/null 2>&1
     iptables -t nat -X $NAME-OUTPUT 1>/dev/null 2>&1
-    iptables -t nat -D $NAME-OUTPUT -p tcp -j $NAME-OUTPUT-mode 1>/dev/null 2>&1
-    iptables -t nat -F $NAME-OUTPUT-mode 1>/dev/null 2>&1
-    iptables -t nat -X $NAME-OUTPUT-mode 1>/dev/null 2>&1
 }
 
 ss_get_config
