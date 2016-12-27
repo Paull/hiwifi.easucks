@@ -59,6 +59,11 @@ action = {
         luci.sys.exec(ss_init_script..' start')
         json = '{"state": 1}'
     end,
+    --  重启服务
+    ['restart'] = function()
+        luci.sys.exec(ss_init_script..' restart')
+        json = '{"state": 1}'
+    end,
     -- 停止服务
     ['stop'] = function()
         luci.sys.exec(ss_init_script..' stop')

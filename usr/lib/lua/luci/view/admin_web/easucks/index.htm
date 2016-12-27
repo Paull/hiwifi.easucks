@@ -148,9 +148,9 @@ include('admin_web/header') %>
                                         <td class="text-td">
                                             <span id="ss_status_info"><%=i18n.translate("g_not_start")%></span>
                                             <a href="javascript:;" class="text-btn" id="ss_start"><%=i18n.translate("g_start")%></a>
+                                            <a href="javascript:;" class="text-btn" id="ss_restart" style="display: none;">重启</a>
                                             <a href="javascript:;" class="text-btn" id="ss_stop" style="display: none;"><%=i18n.translate("g_stop")%></a>
                                             <a href="javascript:;" class="text-btn" id="ss_refresh"><%=i18n.translate("g_refresh")%></a>
-                                            <span class="icon icon22 J_Tip G-handle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 5px;"></span>
                                         </td>
                                     </tr>
                                 </table>
@@ -281,7 +281,6 @@ include('admin_web/header') %>
     </div>
 <div class="G-tip-pop J_ss_auth_tip_text" style="width: 170px; height: 16px; display: none">需与服务器设定一致，默认关闭</div>
 <div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
-<div class="G-tip-pop J_ss_stat_tip_text" style="width: 170px; height: 16px; display: none">启动前先手动保存，否则无效</div>
 <% include('admin_web/footer') %>
 <!-- 通用模块的专属js -->
 <script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?v=<%=ver.svnRevNum%>"></script>

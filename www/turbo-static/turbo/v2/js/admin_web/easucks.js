@@ -133,6 +133,7 @@ $(function () {
                 $("#ss_status").children(':first').removeClass("icon-x").addClass("icon-j");
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_connected"));
                 $('#ss_start').hide();
+                $('#ss_restart').show();
                 $('#ss_stop').show();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_connected"));
                 if(typeof(SS['config']) == 'object' && 'ss_runnin_mode' in SS['config'])
@@ -141,6 +142,7 @@ $(function () {
                 $("#ss_status").children(':first').removeClass("icon-j").addClass("icon-x");
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_not_connected"));
                 $('#ss_start').show();
+                $('#ss_restart').hide();
                 $('#ss_stop').hide();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
@@ -412,6 +414,26 @@ $(function () {
         }, 'json');
     });
 
+    //SS 重启按钮
+    $("#ss_restart").click(function (e) {
+        var $bt = $(this);
+        if ($bt.hasClass('disable')) {
+            return;
+        }
+        $bt.addClass("disable");
+        $bt.text('重启中...');
+        var request_data = {'act': 'restart'};
+        $.post('easucks/ss', request_data, function(data){
+            getSSstatus();
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: data['state'] ? '重启成功' : '出错了!',
+                content: ""
+            }).time(1500);
+            $bt.removeClass("disable").text('重启');
+        }, 'json');
+    });
+
     //SS 启动按钮
     $("#ss_start").click(function (e) {
         var $bt = $(this);
@@ -504,20 +526,6 @@ $(function () {
         }).show();
     }, function () {
         $('.J_ss_fsop_tip_text').hide();
-    });
-
-    //启动停止刷新开关的提示
-    $("#ss_status_info").siblings('span.J_Tip').hover(function () {
-        var $tipPop = $('.J_ss_stat_tip_text');
-        var $this = $(this),
-            l = $this.offset().left - 15,
-            t = $this.offset().top + 20;
-        $tipPop.css({
-            'left': l + 'px',
-            'top': t + 'px'
-        }).show();
-    }, function () {
-        $('.J_ss_stat_tip_text').hide();
     });
 
     //SS是否开机启动
