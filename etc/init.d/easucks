@@ -65,15 +65,22 @@ ss_iptables_add() {
     case $ss_runnin_mode in
         gfwlist)
             [ $(ipset list gfwlist 2>/dev/null| wc -l) -eq 0 ] && { ipset -N gfwlist iphash; }
+            [ $(ipset list ignorelist 2>/dev/null| wc -l) -eq 0 ] && { ipset -N ignorelist iphash; }
             ipset flush gfwlist
+            ipset flush ignorelist
             iptables -t nat -I $NAME-PRERUT -p udp --dport 53 -j DNAT --to-destination $lanip:53
+            iptables -t nat -I $NAME-PRERUT -p tcp -m set --match-set ignorelist dst -j RETURN
+            iptables -t nat -I $NAME-OUTPUT -p tcp -m set --match-set ignorelist dst -j RETURN
             iptables -t nat -A $NAME-PRERUT -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
             # 生成gfwlist.conf
             awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
-            # 生成自定义域名mylist.conf
+            # 生成强制走代理域名列表force_list.conf
             sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-            awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/mylist.conf
+            awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/force_list.conf
+            # 生成强制不走代理域名列表ignore_list.conf
+            sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.list
+            awk '{print "ipset=/."$1"/ignorelist"}' /etc/$NAME/ignore.list >> $DNSMASQ_CONFIG_DIR/ignore_list.conf
             ;;
         game)
             iptables -t nat -A $NAME-PRERUT -m salist --salist china --match-dip -j RETURN
@@ -126,9 +133,12 @@ start() {
 
     # 生成gfwlist.conf
     awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
-    # 生成自定义域名mylist.conf
+    # 生成强制走代理域名列表force_list.conf
     sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-    awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/mylist.conf
+    awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/force_list.conf
+    # 生成强制不走代理域名列表ignore_list.conf
+    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.list
+    awk '{print "server=/."$1"/#"}' /etc/$NAME/ignore.list > $DNSMASQ_CONFIG_DIR/ignore_list.conf
 
     ss_iptables_add
 

@@ -1,8 +1,8 @@
 <%
 --[[
-    Info    FIFA助手插件页
+    Info      FIFA助手插件页
     Author    Paull  <paull@qq.com>
-    Copyright    2016
+    Copyright 2016
 ]]--
 local ver  = require "luci.version"
 local i18n = require "luci.i18n"
@@ -66,8 +66,8 @@ include('admin_web/header') %>
                     <div class="G-main-panel-hd"><span class="icon setting"></span><span><%=i18n.translate('web_advanced_set')%></span></div>
                     <div class="G-main-panel-bd G-btn-list setting-list">
                         <ul>
-                            <li><a href="javascript:;" id="ss_domain_list_bt">域名白名单</a></li>
-                            <li><a href="javascript:;" id="ss_mac_list_bt">MAC黑名单</a></li>
+                            <li><a href="javascript:;" id="ss_domain_list_bt">域名列表管理</a></li>
+                            <li><a href="javascript:;" id="ss_mac_list_bt">MAC名单管理</a></li>
                         </ul>
                     </div>
                 </div>
@@ -217,18 +217,36 @@ include('admin_web/header') %>
                     </div>
                     <div class="G-form-main-bd">
                         <div class="ss-panel">
-                            <table id="domain_list_table" style="width: auto; margin: auto">
+                            <table style="width: auto; margin: auto">
                                 <tr>
                                     <td colspan="2" style="padding-left:15px;">
-                                        <p class="td-tit">强制走代理的域名&nbsp;<a href="easucks/ss?act=gfwlist" target="_blank">查看内置列表</a></p>
+                                        <p>强制走代理的域名&nbsp;<a href="easucks/ss?act=gfwlist" target="_blank">查看内置列表</a></p>
                                         <textarea id="domain_list_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
-                                        <p class="info">一行一个域名，只写根域名就可以包括所有子域名</p>
+                                        <p>一行一个域名，只写根域名就可以包括所有子域名</p>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_list"><%=i18n.translate("g_save")%></a>
+                        </div>
+                    </div>
+                    <div class="G-form-main-bd">
+                        <div class="ss-panel">
+                            <table style="width: auto; margin: auto">
+                                <tr>
+                                    <td colspan="2" style="padding-left:15px;">
+                                        <p>强制不走代理的域名列表</p>
+                                        <textarea id="domain_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
+                                        <p>网速测试、游戏下载之类的域名应该添加到这个列表中</p>
+                                        <p>这样便可以启用更高速的CDN服务器进行下载或测速</p>
+                                        <p>如果与强制走代理的域名冲突或有包含关系，则优先不走代理</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-btn-bar">
+                            <a href="javascript:;" class="btn" id="submit_domain_ignore"><%=i18n.translate("g_save")%></a>
                         </div>
                     </div>
                 </div>
@@ -248,7 +266,7 @@ include('admin_web/header') %>
                                     <td colspan="2" style="padding-left:15px;">
                                         <p class="td-tit">不走代理的设备列表</p>
                                         <textarea id="mac_list_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
-                                        <p class="info">家中不希望某个设备走代理，可在此填写该设备MAC地址(格式为00:11:22:AA:BB:CC)<br>保存后还需要重启SS才生效</p>
+                                        <p class="info">不希望某个设备走代理，可在此填写该设备MAC地址(格式为00:11:22:AA:BB:CC)<br>保存后还需要重启SS才生效</p>
                                     </td>
                                 </tr>
                             </table>

@@ -151,10 +151,17 @@ $(function () {
         }, 'json');
     }
 
-    //获取自定义域名列表
+    //获取强制走代理域名列表
     function get_my_list() {
         $.post('easucks/ss', {'act': 'mylist'}, function(data){
             $('#domain_list_value').val(data);
+        });
+    }
+
+    //获取强制不走代理域名列表
+    function get_my_ignore() {
+        $.post('easucks/ss', {'act': 'myignore'}, function(data){
+            $('#domain_ignore_value').val(data);
         });
     }
 
@@ -183,6 +190,7 @@ $(function () {
         getSSconfig();
         getSSstatus();
         get_my_list();
+        get_my_ignore();
         get_mac_list();
     }
 
@@ -311,7 +319,7 @@ $(function () {
         controller_view.showAdvancedView($("#ss_advanced_table"), $(this));
     });
  
-    //自定义域名 提交表单
+    //强制走代理域名列表 提交表单
     $("#submit_domain_list").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
@@ -322,6 +330,28 @@ $(function () {
         var request_data = {
             'act':  'mylist_save',
             'list': $('#domain_list_value').val()
+        };
+        $.post('easucks/ss', request_data, function(data){
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: [HiWiFi.i18n.prop("g_set_success")],
+                content: ""
+            }).time(1500);
+            $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
+        }, 'json');
+    });
+
+    //强制走代理域名列表 提交表单
+    $("#submit_domain_ignore").click(function (e) {
+        var $bt = $(this);
+        if ($bt.hasClass('disable')) {
+            return;
+        }
+        $bt.addClass("disable");
+        $bt.text(HiWiFi.i18n.prop("g_retaining"));
+        var request_data = {
+            'act':  'myignore_save',
+            'list': $('#domain_ignore_value').val()
         };
         $.post('easucks/ss', request_data, function(data){
             HiWiFi.popDialog({
