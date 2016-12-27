@@ -35,7 +35,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 ## TODO LIST
 - [x] 安装插件后可以极路由仍可以升级固件，待下个固件版本测试
 - [ ] 保存多个SS服务器配置的功能
-- [ ] 域名白名单功能
+- [x] 域名白名单功能
 - [ ] 区分自定义和傻瓜式两种界面
 - [ ] 显示FIFA相关的网络连接
 
