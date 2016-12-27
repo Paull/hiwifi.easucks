@@ -133,10 +133,10 @@ start() {
     $DAEMON -c $CONFIGFILE -f $PIDFILE
 
     # 生成gfwlist.conf
-    awk '{print "server=/."$1"/127.0.0.1#1053"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
+    awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
     # 生成自定义域名mylist.conf
     sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-    awk '{print "server=/."$1"/127.0.0.1#1053"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/mylist.conf
+    awk '{print "server=/."$1"/127.0.0.1#54"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/mylist.conf
 
     ss_iptables_add
 

@@ -17,36 +17,37 @@ GROUP=nogroup
 
 start() {
     echo "Starting $DESC: $NAME"
-
     ss_remote_dnss=$(uci get $SSNAME.ss_remote_dnss)
     cat > $CONFIG_FILE <<EOF
 global {
-    perm_cache=256;
-    cache_dir="$CACHEDIR";
-    pid_file = $PIDFILE;
-    run_as="nobody";
-    server_ip = 127.0.0.1;
-    server_port = 1053;
-    status_ctl = on;
-    query_method = tcp_only;
-    min_ttl=15m;       # Retain cached entries at least 15 minutes.
-    max_ttl=1w;        # One week.
-    timeout=10;        # Global timeout option (10 seconds).
-    neg_domain_pol=on;
-    proc_limit=2;
-    procq_limit=8;
+    perm_cache      = 65535;
+    cache_dir       = $CACHEDIR;
+    status_ctl      = on;
+    server_ip       = 127.0.0.1;
+    server_port     = 54;
+    query_method    = tcp_only;
+    tcp_server      = off;
+    min_ttl         = 1d;
+    max_ttl         = 1w;
+    timeout         = 10;
+    randomize_recs  = on;
+    debug           = off;
+    daemon          = on;
+    verbosity       = 1;
+    neg_rrs_pol     = on;
+    neg_domain_pol  = on;
+    par_queries     = 1;
 }
 
 server {
-    label= "ss_remote_dnss";
-    timeout=6;         # Server timeout; this may be much shorter
-    uptest=none;         # Test if the network interface is active.
-    interval=10m;      # Check every 10 minutes.
-    purge_cache=off;   # Keep stale cache entries in case the ISP's
+    label = "ss_remote_ddns";
     ip=$ss_remote_dnss;
+    proxy_only = on;
+    timeout = 5;
+    caching = on;
+    purge_cache = off;
 }
 EOF
-
    gen_cache
    $DAEMON --daemon -p $PIDFILE
 }
