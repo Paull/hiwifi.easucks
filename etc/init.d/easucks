@@ -55,17 +55,6 @@ ss_iptables_add() {
     iptables -t nat -N $NAME-mode
     iptables -t nat -A $NAME -p tcp -j $NAME-mode
 
-    iptables -t nat -N $NAME-ppp
-    iptables -t nat -A PREROUTING -i ppp+ -j $NAME-ppp
-    iptables -t nat -A $NAME-ppp -i pppoe-wan -j RETURN
-    iptables -t nat -A $NAME-ppp -m salist --salist local --match-dip -j RETURN
-    iptables -t nat -A $NAME-ppp -m salist --salist hiwifi --match-dip -j RETURN
-    iptables -t nat -A $NAME-ppp -d $lanip/24 -j RETURN
-    iptables -t nat -A $NAME-ppp -d $wanip/24 -j RETURN
-    iptables -t nat -A $NAME-ppp -d $ss_server_ipad/32 -j RETURN
-    iptables -t nat -N $NAME-ppp-mode
-    iptables -t nat -A $NAME-ppp -p tcp -j $NAME-ppp-mode
-
     iptables -t nat -N $NAME-OUTPUT
     iptables -t nat -A OUTPUT -p tcp -j $NAME-OUTPUT
     iptables -t nat -A $NAME-OUTPUT -m salist --salist local --match-dip -j RETURN
@@ -82,7 +71,6 @@ ss_iptables_add() {
             [ $(ipset list gfwlist 2>/dev/null| wc -l) -eq 0 ] && { ipset -N gfwlist iphash; }
             ipset flush gfwlist
             iptables -t nat -A $NAME-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-ppp-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-OUTPUT-mode -p tcp -m set --match-set gfwlist dst -j DNAT --to-destination $lanip:$ss_local_port
             # 生成gfwlist.conf
             awk '{print "ipset=/."$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
@@ -92,26 +80,20 @@ ss_iptables_add() {
             ;;
         game)
             iptables -t nat -A $NAME-mode -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-ppp-mode -m salist --salist china --match-dip -j RETURN
             iptables -t nat -A $NAME-OUTPUT-mode -m salist --salist china --match-dip -j RETURN
             iptables -t nat -A $NAME-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-ppp-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-OUTPUT-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             ;;
         web)
             iptables -t nat -A $NAME-mode -m salist --salist china --match-dip -j RETURN
-            iptables -t nat -A $NAME-ppp-mode -m salist --salist china --match-dip -j RETURN
             iptables -t nat -A $NAME-OUTPUT-mode -m salist --salist china --match-dip -j RETURN
             iptables -t nat -A $NAME-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-ppp-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-ppp-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-OUTPUT-mode -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-OUTPUT-mode -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
             ;;
         all)
             iptables -t nat -A $NAME-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
-            iptables -t nat -A $NAME-ppp-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-OUTPUT-mode -p tcp -j DNAT --to-destination $lanip:$ss_local_port
             ;;
     esac
@@ -134,13 +116,6 @@ ss_iptables_del() {
     iptables -t nat -D $NAME -p tcp -j $NAME-mode 1>/dev/null 2>&1
     iptables -t nat -F $NAME-mode 1>/dev/null 2>&1
     iptables -t nat -X $NAME-mode 1>/dev/null 2>&1
-
-    iptables -t nat -D PREROUTING -i ppp+ -j $NAME-ppp 1>/dev/null 2>&1
-    iptables -t nat -F $NAME-ppp 1>/dev/null 2>&1
-    iptables -t nat -X $NAME-ppp 1>/dev/null 2>&1
-    iptables -t nat -D $NAME-ppp -p tcp -j $NAME-ppp-mode 1>/dev/null 2>&1
-    iptables -t nat -F $NAME-ppp-mode 1>/dev/null 2>&1
-    iptables -t nat -X $NAME-ppp-mode 1>/dev/null 2>&1
 
     iptables -t nat -D OUTPUT -p tcp -j $NAME-OUTPUT 1>/dev/null 2>&1
     iptables -t nat -F $NAME-OUTPUT 1>/dev/null 2>&1
