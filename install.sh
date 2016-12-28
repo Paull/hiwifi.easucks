@@ -1,6 +1,6 @@
 NAME=FIFA助手
-DOWNFROM=https://hk1.llbbll.com/downloads
-FILENAME=hiwifi.1s.tar.gz
+DOWNFROM=https://yourdownloadmirror.com/downloads
+FILENAME=yourpackagename.tar.gz
 if [ $(grep 'admin_web.*upgrade' /usr/lib/lua/luci/view/admin_web/home.htm|wc -l) -eq 1 ]; then
     WHERE="首页"
     echo ">>>备份首页文件..."
@@ -11,8 +11,10 @@ else
     WHERE="互联网页"
     echo ">>>备份互联网页文件..."
     [ ! -f /usr/lib/lua/luci/view/admin_web/network/index.backup ] && cp /usr/lib/lua/luci/view/admin_web/network/index.htm /usr/lib/lua/luci/view/admin_web/network/index.backup
-    echo ">>>在互联网页插入按钮..."
-    sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'easucks'"'"')%>">'"$NAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
+    if [ $(grep $NAME /usr/lib/lua/luci/view/admin_web/network/index.htm|wc -l) -lt 1 ]; then
+        echo ">>>在互联网页插入按钮..."
+        sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'easucks'"'"')%>">'"$NAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
+    fi
 fi
 echo -n ">>>正在安装系统插件..."
 opkg update > /dev/null
