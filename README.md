@@ -34,6 +34,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 
 ## TODO LIST
 - [x] 安装插件后可以极路由仍可以升级固件，待下个固件版本测试
+- [x] SS插件新增「重启」按钮，同时「启动」和「重启」按钮已具备判断表单是否变动，如有变动会先保存再执行操作
 - [ ] 保存多个SS服务器配置的功能
 - [x] 域名白名单功能
 - [ ] 区分自定义和傻瓜式两种界面
