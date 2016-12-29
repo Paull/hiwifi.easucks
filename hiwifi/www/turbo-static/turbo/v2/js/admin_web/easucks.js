@@ -104,11 +104,9 @@ $(function () {
                 $('#ss_server_port').val(data['ss_server_port']);
                 $('#ss_server_pass').val(data['ss_server_pass']);
                 $('#ss_server_meth').val(data['ss_server_meth']);
-                $('#ss_server_auth').val(data['ss_server_auth']);
-                $('#ss_server_fsop').val(data['ss_server_fsop']);
                 $('#ss_runnin_mode').val(data['ss_runnin_mode']);
-                $('#ss_remote_dnss').val(data['ss_remote_dnss']);
-                $('#ss_local_port').val( data['ss_local_port']);
+                $('#ss_remote_dnss').val(data['ss_remote_dnss'] ? data['ss_remote_dnss'] : '8.8.4.4');
+                $('#ss_local_port').val(data['ss_local_port'] ? data['ss_local_port'] : '61717');
                 if (data['ss_server_auth'] == "true") {
                     $('#ss_server_auth').siblings("input").val("true");
                     $('#ss_server_auth').removeClass("off").addClass("on");
@@ -622,7 +620,8 @@ $(function () {
             ss_server_port: {required: true, positiveInteger: true},
             ss_server_pass: {required: true},
             ss_server_meth: {required: true},
-            ss_runnin_mode: {required: true}
+            ss_runnin_mode: {required: true},
+            ss_remote_dnss: {required: true}
         },
         messages: {
             ss_server_choice: {required: '请选择服务器', alphanumber: '请修改别名'},
@@ -631,7 +630,8 @@ $(function () {
             ss_server_port: {required: '请填写服务器端口'},
             ss_server_pass: {required: '请填写SS通讯密码'},
             ss_server_meth: {required: '请选择SS加密算法'},
-            ss_runnin_mode: {required: '请选择SS运行模式'}
+            ss_runnin_mode: {required: '请选择SS运行模式'},
+            ss_remote_dnss: {required: '请选择远程DNS服务器'}
         },
         errorPlacement: function (place, $element) {
             $element.parent().append(place);
@@ -643,7 +643,7 @@ $(function () {
         var _this = this;
         console.log($(this).val());
         console.log($(_this).val());
-        $('#ss_server_choice option:selected').val($(_this).val()).text($(_this).val());
+        $('#ss_server_choice option:selected').text($(_this).val());
         HiWiFi.changeSelectToDiv();
     });
 
@@ -659,6 +659,8 @@ $(function () {
         $('#ss_runnin_mode').val('');
         $('#ss_server_auth').val('false');
         $('#ss_server_fsop').val('false');
+        $('#ss_remote_dnss').val('8.8.4.4');
+        $('#ss_local_port').val('61717');
         HiWiFi.changeSelectToDiv();
     })
 });
