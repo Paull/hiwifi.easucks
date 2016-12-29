@@ -17,7 +17,8 @@ GROUP=nogroup
 
 start() {
     echo "Starting $DESC: $NAME"
-    ss_remote_dnss=$(uci get $SSNAME.ss_remote_dnss)
+    ss_server_choice=$(uci get $SSNAME.ss_server_choice)
+    ss_remote_dnss=$(uci get $SSNAME.$ss_server_choice.ss_remote_dnss)
     cat > $CONFIG_FILE <<EOF
 global {
     perm_cache      = 65535;

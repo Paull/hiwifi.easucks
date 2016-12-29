@@ -11,17 +11,16 @@ DNSMASQ_CONFIG_DIR=/tmp/dnsmasq.d
 
 ss_get_config() {
     lanip=$(uci get network.lan.ipaddr)
-
-    ss_server_ipad=$(uci get $NAME.ss_server_ipad)
-    ss_server_port=$(uci get $NAME.ss_server_port)
-    ss_server_pass=$(uci get $NAME.ss_server_pass)
-    ss_server_meth=$(uci get $NAME.ss_server_meth)
-    ss_runnin_mode=$(uci get $NAME.ss_runnin_mode)
-    ss_remote_dnss=$(uci get $NAME.ss_remote_dnss)
-    ss_server_auth=$(uci get $NAME.ss_server_auth)
-    ss_server_fsop=$(uci get $NAME.ss_server_fsop)
-
-    ss_local_port=$(uci get $NAME.ss_local_port)
+    ss_server_choice=$(uci get $NAME.ss_server_choice)
+    ss_server_ipad=$(uci get $NAME.$ss_server_choice.ss_server_ipad)
+    ss_server_port=$(uci get $NAME.$ss_server_choice.ss_server_port)
+    ss_server_pass=$(uci get $NAME.$ss_server_choice.ss_server_pass)
+    ss_server_meth=$(uci get $NAME.$ss_server_choice.ss_server_meth)
+    ss_runnin_mode=$(uci get $NAME.$ss_server_choice.ss_runnin_mode)
+    ss_remote_dnss=$(uci get $NAME.$ss_server_choice.ss_remote_dnss)
+    ss_server_auth=$(uci get $NAME.$ss_server_choice.ss_server_auth)
+    ss_server_fsop=$(uci get $NAME.$ss_server_choice.ss_server_fsop)
+    ss_local_port=$(uci get $NAME.$ss_server_choice.ss_local_port)
 }
 
 ss_create_config_file(){
