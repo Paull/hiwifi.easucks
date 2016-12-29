@@ -662,5 +662,21 @@ $(function () {
         $('#ss_remote_dnss').val('8.8.4.4');
         $('#ss_local_port').val('61717');
         HiWiFi.changeSelectToDiv();
-    })
+    });
+
+    //删除SS服务器配置
+    $('#ss_delete').on('click', function(){
+        var request_data = {
+            'act': 'delete',
+            'ss_server_choice': $('#ss_server_choice').val()
+        };
+        $.post('easucks/ss', request_data, function(data){
+            getSSconfig();
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: data['state'] ? '删除成功' : '出错了!',
+                content: ""
+            }).time(1500);
+        }, 'json');
+    });
 });

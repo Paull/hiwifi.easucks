@@ -51,7 +51,7 @@ action = {
             json = string.gsub('{"ss_server_choices": '..ss_server_choices..', "ss_server_choice": "'..ss_server_choice..'", '..ss_config..'}', ', }', '}')
         end
     end,
-    -- 保存服务
+    -- 保存服务器
     ['save'] = function()
         luci.sys.exec('touch '..ss_config_path..';')
         if ss_server_choice ~= ss_server_name then
@@ -71,12 +71,20 @@ action = {
         luci.sys.exec('uci commit;')
         json = '{"state": 1}'
     end,
+    -- 删除服务器
+    ['delete'] = function()
+        luci.sys.exec('uci delete easucks.'..ss_server_choice..';')
+        ss_server_choice = string.gsub(luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | awk -F= '{if($2==\"node\") print $1;}' | head -1"), '\n', '')
+        luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
+        luci.sys.exec('uci commit;')
+        json = '{"state": 1}'
+    end,
     -- 启动服务
     ['start'] = function()
         luci.sys.exec(ss_init_script..' start')
         json = '{"state": 1}'
     end,
-    --  重启服务
+    -- 重启服务
     ['restart'] = function()
         luci.sys.exec(ss_init_script..' restart')
         json = '{"state": 1}'
