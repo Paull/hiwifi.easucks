@@ -1,4 +1,3 @@
-/etc/config/easucks
 /etc/init.d/easucks
 /etc/init.d/pdnsd
 /etc/rc.d/S99easucks
