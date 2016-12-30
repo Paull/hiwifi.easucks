@@ -662,7 +662,7 @@ $(function () {
     $('#ss_create').on('click', function(){
         var random_name = 'server'+Math.round(Math.random()*10000);
         $('#ss_server_choice').append('<option value="'+random_name+'">'+random_name+'</option>').val(random_name);
-        $('#ss_server_name').val(random_name);
+        $('#ss_server_name').val(random_name).select();
         $('#ss_server_ipad').val('');
         $('#ss_server_port').val('');
         $('#ss_server_pass').val('');
