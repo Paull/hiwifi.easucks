@@ -1,6 +1,4 @@
-/etc/config/easucks
 /etc/init.d/easucks
-/etc/init.d/pdnsd
 /etc/rc.d/S99easucks
 /etc/easucks/ignore.list
 /etc/easucks/ignore.mac

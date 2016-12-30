@@ -6,27 +6,28 @@ NAME=easucks
 DESC="socks5 proxy redirector"
 DAEMON=/usr/bin/ss-redir
 PIDFILE=/var/run/$NAME.pid
-CONFIGFILE=/tmp/$NAME/config.json
+TMPDIR=/tmp/$NAME
+SSCONFIG=$TMPDIR/ss.json
+PDNSDCONFIG=$TMPDIR/pdnsd.conf
 DNSMASQ_CONFIG_DIR=/tmp/dnsmasq.d
 
 ss_get_config() {
     lanip=$(uci get network.lan.ipaddr)
-
-    ss_server_ipad=$(uci get $NAME.ss_server_ipad)
-    ss_server_port=$(uci get $NAME.ss_server_port)
-    ss_server_pass=$(uci get $NAME.ss_server_pass)
-    ss_server_meth=$(uci get $NAME.ss_server_meth)
-    ss_runnin_mode=$(uci get $NAME.ss_runnin_mode)
-    ss_remote_dnss=$(uci get $NAME.ss_remote_dnss)
-    ss_server_auth=$(uci get $NAME.ss_server_auth)
-    ss_server_fsop=$(uci get $NAME.ss_server_fsop)
-
-    ss_local_port=$(uci get $NAME.ss_local_port)
+    ss_server_choice=$(uci get $NAME.ss_server_choice)
+    ss_server_ipad=$(uci get $NAME.$ss_server_choice.ss_server_ipad)
+    ss_server_port=$(uci get $NAME.$ss_server_choice.ss_server_port)
+    ss_server_pass=$(uci get $NAME.$ss_server_choice.ss_server_pass)
+    ss_server_meth=$(uci get $NAME.$ss_server_choice.ss_server_meth)
+    ss_runnin_mode=$(uci get $NAME.$ss_server_choice.ss_runnin_mode)
+    ss_remote_dnss=$(uci get $NAME.$ss_server_choice.ss_remote_dnss)
+    ss_server_auth=$(uci get $NAME.$ss_server_choice.ss_server_auth)
+    ss_server_fsop=$(uci get $NAME.$ss_server_choice.ss_server_fsop)
+    ss_local_port=$(uci get $NAME.$ss_server_choice.ss_local_port)
 }
 
 ss_create_config_file(){
     mkdir -p /tmp/$NAME/
-    cat > $CONFIGFILE << EOF
+    cat > $SSCONFIG << EOF
 {
     "server": "$ss_server_ipad",
     "server_port": $ss_server_port,
@@ -40,6 +41,42 @@ ss_create_config_file(){
     "mode": "tcp_only"
 }
 EOF
+}
+
+pdnsd_create_config_file(){
+    mkdir -p /tmp/$NAME/
+    cat > $PDNSDCONFIG <<EOF
+global {
+    perm_cache      = 65535;
+    cache_dir       = /var/pdnsd;
+    status_ctl      = on;
+    server_ip       = 127.0.0.1;
+    server_port     = 54;
+    query_method    = tcp_only;
+    tcp_server      = off;
+    min_ttl         = 1d;
+    max_ttl         = 1w;
+    timeout         = 10;
+    randomize_recs  = on;
+    debug           = off;
+    daemon          = on;
+    verbosity       = 1;
+    neg_rrs_pol     = on;
+    neg_domain_pol  = on;
+    par_queries     = 1;
+}
+
+server {
+    label = "ss_remote_ddns";
+    ip=$ss_remote_dnss;
+    proxy_only = on;
+    timeout = 5;
+    caching = on;
+    purge_cache = off;
+}
+EOF
+    chmod 644 $PDNSDCONFIG
+    ln -sf $PDNSDCONFIG /etc/pdnsd.conf
 }
 
 ss_iptables_add() {
@@ -121,8 +158,9 @@ ss_get_config
 
 start() {
     insmod ipt_REDIRECT 2>/dev/null
+    pdnsd_create_config_file
     ss_create_config_file
-    $DAEMON -c $CONFIGFILE -f $PIDFILE
+    $DAEMON -c $SSCONFIG -f $PIDFILE
 
     # 生成gfwlist.conf
     awk '{print "server=/"$1"/127.0.0.1#54"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
@@ -135,24 +173,29 @@ start() {
 
     ss_iptables_add
 
+    #官方dnsmasq重启时自动启动pdnsd
+    uci set dhcp.@dnsmasq[0].honest=1
+    uci commit
     /etc/init.d/dnsmasq restart
-    /etc/init.d/pdnsd start
 }
 
 stop() {
     ss_iptables_del
 
-    rm -rf $CONFIGFILE
+    rm -rf $SSCONFIG $PDNSDCONFIG
     if [ -f $PIDFILE ]; then
         kill -9 `cat $PIDFILE`
         rm -f $PIDFILE
     fi
-    kill -9 `ps | grep "$DAEMON -c $CONFIGFILE" | grep -v grep | awk '{print $1}'` 2>/dev/null
+    kill -9 `ps | grep "$DAEMON -c $SSCONFIG" | grep -v grep | awk '{print $1}'` 2>/dev/null
 
     #删除针对dnsmasq生成的域名列表
     rm -f $DNSMASQ_CONFIG_DIR/gfwlist.conf
     rm -f $DNSMASQ_CONFIG_DIR/force_list.conf
     rm -f $DNSMASQ_CONFIG_DIR/ignore_list.conf
-    #官方dnsmasq重启时自动停止pdnsd
+
+    #官方dnsmasq重启时自动重启pdnsd
+    uci delete dhcp.@dnsmasq[0].honest
+    uci commit
     /etc/init.d/dnsmasq restart
 }
