@@ -4,10 +4,10 @@
     Author    Paull  <paull@qq.com>
     Copyright 2016
 ]]--
-local ver  = require "luci.version"
+local version  = "1.2.0"
 local i18n = require "luci.i18n"
 include('admin_web/header') %>
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/net.css?v=<%=ver.svnRevNum%>">
+<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/net.css?v=<%=version%>">
 <div id="bd">
     <div class="com-main clearfix">
         <div id="right_part" class="G-rightSide">
@@ -298,8 +298,8 @@ include('admin_web/header') %>
 <div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
 <% include('admin_web/footer') %>
 <!-- 通用模块的专属js -->
-<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?v=<%=ver.svnRevNum%>"></script>
+<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?v=<%=version%>"></script>
 <!-- SS插件页的专属js -->
-<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/easucks.js?v=<%=ver.svnRevNum%>"></script>
+<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/easucks.js?v=<%=version%>"></script>
 </body>
 </html>
