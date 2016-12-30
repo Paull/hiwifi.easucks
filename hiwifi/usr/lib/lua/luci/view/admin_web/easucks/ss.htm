@@ -33,14 +33,15 @@ action = {
     -- 获取运行信息
     ['status'] = function()
         local ss_state = luci.sys.exec('if [ "`ps | grep '..ss_binary_path..' | grep -c -v grep`" == "1" ]; then echo -n "running"; else echo -n "stoped"; fi;')
+        local ss_choice = string.gsub(luci.sys.exec("uci -q get easucks.ss_server_choice"), '\n', '')
         local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true;else echo -n false;fi")
-        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'"}'
+        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'"}'
     end,
     -- 获取配置信息
     ['config'] = function()
         luci.sys.exec('touch '..ss_config_path..';')
         if ss_server_choice == '' then
-            ss_server_choice = luci.sys.exec("uci show easucks.ss_server_choice | sed 's/easucks.ss_server_choice=//'")
+            ss_server_choice = luci.sys.exec("uci -q get easucks.ss_server_choice")
         end
         if ss_server_choice == '' then
             json = '{"ss_server_choices": ["server1"], "ss_server_choice": "server1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "easucks", "ss_server_auth": "false", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}' 

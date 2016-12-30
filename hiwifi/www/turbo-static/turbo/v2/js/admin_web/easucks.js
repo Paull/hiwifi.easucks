@@ -127,7 +127,6 @@ $(function () {
                     getSSconfig($(this).text());
                 });
             }
-            $("#current_way").text('自定义模式');
         }, 'json');
     }
 
@@ -162,6 +161,8 @@ $(function () {
                 $('#ss_stop').hide();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
+
+            $("#current_way").text(data['ss_choice']);
 
             //显示样式,去除loding
             $('#ss_stauts_area').children(':eq(0)').hide();
