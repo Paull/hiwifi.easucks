@@ -1,5 +1,5 @@
 NAME=FIFA助手
-DOWNFROM=https://yourdownloadmirror.com/downloads
+DOWNFROM=https://yourdownloadmirror/downloads
 FILENAME=yourpackagename.tar.gz
 echo ">>>正在下载$NAME..."
 curl -# -k $DOWNFROM/$FILENAME -o /tmp/$FILENAME > /dev/null
