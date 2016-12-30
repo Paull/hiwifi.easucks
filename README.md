@@ -37,6 +37,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 - [x] SS插件新增「重启」按钮，同时「启动」和「重启」按钮已具备判断表单是否变动，如有变动会先保存再执行操作
 - [x] 保存多个SS服务器配置的功能
 - [x] 域名白名单功能
+- [ ] 扩展SS状态的判断，现在的SS状态只判断了进程是否启动，未判断DNS和iptables等信赖服务的状态
 - [ ] 区分自定义和傻瓜式两种界面
 - [ ] 显示FIFA相关的网络连接
 
