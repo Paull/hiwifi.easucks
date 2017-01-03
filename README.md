@@ -1,7 +1,7 @@
 # FIFA助手
 - 目前只是个SS插件而已。
 - 完全采用极路由后台风格设计（[截图1](screenshots/01.home.png)，[截图2](screenshots/02.config.png)），插件样式更美观。
-- 重点优化了GFWLIST模式，集成FIFA相关的域名，做到EA、LIVE、PSN、ORIGIN走代理，下载和网战仍然是裸连。所以推荐大家使用这个模式。
+- 重点优化了GFWLIST模式，集成FIFA相关的域名（[截图3](screenshots/03.mylist.png)），做到EA、LIVE、PSN、ORIGIN走代理，下载和网战仍然是裸连。所以推荐大家使用这个模式。
 - 但我们的目标不是做个SS插件，未来会推出更多FIFA相关的功能，专注游戏而不是梯子，因为游戏本没有被墙，只是线路拥堵而已。
 
 ## 主要功能
@@ -25,9 +25,9 @@
 - 第一步：ROOT
   - 绑定极小号并申请成为开发者(极路由后台->智能插件->路由器信息->高级设置->申请成为开发者)
   - 完成上一步后，便可以安装「开发者模式」这个插件（装完这个插件也就是ROOT成功了）。
-  - 认真看「开发者模式」的说明，并进入极路由的ssh（Windows平台需下载ssh客户端：putty [下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)，[截图1](screenshots/04.putty.png)，[截图2](screenshots/05.login.png)）。
+  - 认真看「开发者模式」的说明，并进入极路由的ssh（Windows平台需下载ssh客户端：putty [下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)，[截图4](screenshots/04.putty.png)，[截图5](screenshots/05.login.png)）。
 - 第二步：
-  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn/-|sh`（[查看截图](screenshots/06.install.png)）
+  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn/-|sh`（[截图6](screenshots/06.install.png)）
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
