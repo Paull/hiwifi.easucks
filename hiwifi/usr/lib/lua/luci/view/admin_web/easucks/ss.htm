@@ -119,6 +119,8 @@ action = {
         io.write(list)
         io.output():close()
         io.output(temp)
+        luci.sys.exec("cp "..my_list.." /tmp/tmp.list")
+        luci.sys.exec("cat /tmp/tmp.list|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..my_list)
         luci.sys.exec(dnsmasq_script..' restart')
         json = '{"state": 1}'
     end,
@@ -134,6 +136,8 @@ action = {
         io.write(list)
         io.output():close()
         io.output(temp)
+        luci.sys.exec("cp "..my_ignore.." /tmp/tmp.list")
+        luci.sys.exec("cat /tmp/tmp.list|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..my_ignore)
         luci.sys.exec(dnsmasq_script..' restart')
         json = '{"state": 1}'
     end,
@@ -149,6 +153,8 @@ action = {
         io.write(list)
         io.output():close()
         io.output(temp)
+        luci.sys.exec("cp "..ignore_mac_list.." /tmp/tmp.list")
+        luci.sys.exec("cat /tmp/tmp.list|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..ignore_mac_list)
         luci.sys.exec(dnsmasq_script..' restart')
         json = '{"state": 1}'
     end

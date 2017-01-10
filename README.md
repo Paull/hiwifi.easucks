@@ -28,7 +28,7 @@
   - 完成上一步后，便可以安装「开发者模式」这个插件（装完这个插件也就是ROOT成功了）。
   - 认真看「开发者模式」的说明，并进入极路由的ssh（Windows平台需下载ssh客户端：putty [下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)，[截图1](screenshots/04.putty.png)，[截图2](screenshots/05.login.png)）。
 - 第二步：
-  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn/-|sh`（[查看截图](screenshots/06.install.png)）
+  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn/1.2.1|sh`（[查看截图](screenshots/06.install.png)）
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
