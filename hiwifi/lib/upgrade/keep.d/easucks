@@ -5,6 +5,8 @@
 /etc/easucks/my.list
 /etc/easucks/gfw.list
 /lib/upgrade/keep.d/easucks
+/usr/bin/ss-redir
+/usr/sbin/pdnsd
 /usr/lib/lua/luci/view/admin_web/home.htm
 /usr/lib/lua/luci/view/admin_web/network/index.htm
 /usr/lib/lua/luci/view/admin_web/easucks/index.htm
