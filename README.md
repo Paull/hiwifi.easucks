@@ -27,7 +27,7 @@
   - 完成上一步后，便可以安装「开发者模式」这个插件（装完这个插件也就是ROOT成功了）。
   - 认真看「开发者模式」的说明，并进入极路由的ssh（Windows平台需下载ssh客户端：putty [下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)，[截图4](screenshots/04.putty.png)，[截图5](screenshots/05.login.png)）。
 - 第二步：
-  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn/1.2.1|sh`（[截图6](screenshots/06.install.png)）
+  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn/1.2.3|sh`（[截图6](screenshots/06.install.png)）
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
@@ -39,7 +39,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 ```
 
 ## TODO LIST
-- [x] 安装本插件后，极路由仍可以自由升级固件（实测1.2.5升1.3.4会丢失两个可执行文件，已更新待下个版本测试）
+- [x] 安装本插件后，极路由仍可以自由升级固件（1.4.5因css存放目录变动，导致风格不能正常显示）
 - [x] SS插件新增「重启」按钮，同时「启动」和「重启」按钮已具备判断表单是否变动，如有变动会先保存再执行操作
 - [x] 保存多个SS服务器配置的功能
 - [x] 域名白名单功能
