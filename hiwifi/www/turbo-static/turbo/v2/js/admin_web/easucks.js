@@ -149,6 +149,7 @@ $(function () {
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_connected"));
                 $('#ss_start').hide();
                 $('#ss_restart').show();
+                $('.btn_ss_restart').show();
                 $('#ss_stop').show();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_connected"));
                 if(typeof(SS['config']) == 'object' && 'ss_runnin_mode' in SS['config'])
@@ -158,6 +159,7 @@ $(function () {
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_not_connected"));
                 $('#ss_start').show();
                 $('#ss_restart').hide();
+                $('.btn_ss_restart').hide();
                 $('#ss_stop').hide();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
@@ -432,7 +434,7 @@ $(function () {
     });
 
     //SS 重启按钮
-    $("#ss_restart").click(function (e) {
+    $("#ss_restart, .btn_ss_restart").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
             return;

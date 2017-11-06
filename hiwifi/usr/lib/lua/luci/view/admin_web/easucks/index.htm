@@ -4,10 +4,9 @@
     Author    Paull  <paull@qq.com>
     Copyright 2016
 ]]--
-local version  = "1.2.4"
+local version  = "1.4.5"
 local i18n = require "luci.i18n"
 include('admin_web/header') %>
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/net.css?v=<%=version%>">
 <link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/admin_web/net.css?v=<%=version%>">
 <div id="bd">
     <div class="com-main clearfix">
@@ -68,7 +67,7 @@ include('admin_web/header') %>
                     <div class="G-main-panel-bd G-btn-list setting-list">
                         <ul>
                             <li><a href="javascript:;" id="ss_domain_list_bt">域名列表管理</a></li>
-                            <li><a href="javascript:;" id="ss_mac_list_bt">MAC名单管理</a></li>
+                            <li><a href="javascript:;" id="ss_mac_list_bt">设备黑名单管理</a></li>
                         </ul>
                     </div>
                 </div>
@@ -244,6 +243,7 @@ include('admin_web/header') %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_list"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                     <div class="G-form-main-bd">
@@ -263,6 +263,7 @@ include('admin_web/header') %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_ignore"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                 </div>
@@ -273,7 +274,7 @@ include('admin_web/header') %>
                         <span class="G-handle right go_back">
                             <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
                         </span>
-                        <span class="icon setting"></span><span>MAC列表管理</span>
+                        <span class="icon setting"></span><span>设备黑名单管理</span>
                     </div>
                     <div class="G-form-main-bd">
                         <div class="ss-panel">
@@ -289,6 +290,7 @@ include('admin_web/header') %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_mac_list"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                 </div>
