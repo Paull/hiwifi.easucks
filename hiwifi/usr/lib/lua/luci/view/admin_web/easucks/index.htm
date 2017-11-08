@@ -4,10 +4,9 @@
     Author    Paull  <paull@qq.com>
     Copyright 2016
 ]]--
-local version  = "1.2.4"
+local version  = "1.4.5l"
 local i18n = require "luci.i18n"
 include('admin_web/header') %>
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/net.css?v=<%=version%>">
 <link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/admin_web/net.css?v=<%=version%>">
 <div id="bd">
     <div class="com-main clearfix">
@@ -68,7 +67,7 @@ include('admin_web/header') %>
                     <div class="G-main-panel-bd G-btn-list setting-list">
                         <ul>
                             <li><a href="javascript:;" id="ss_domain_list_bt">域名列表管理</a></li>
-                            <li><a href="javascript:;" id="ss_mac_list_bt">MAC名单管理</a></li>
+                            <li><a href="javascript:;" id="ss_mac_list_bt">设备黑名单管理</a></li>
                         </ul>
                     </div>
                 </div>
@@ -91,7 +90,7 @@ include('admin_web/header') %>
                                     <tr>
                                         <th>服务器选择</th>
                                         <td>
-                                            <select id="ss_server_choice" name="ss_server_choice" class="J_selectOriginal"></select>
+                                            <select id="ss_server_nodes" name="ss_server_choice" class="J_selectOriginal"></select>
                                             <a href="javascript:;" class="text-btn" id="ss_create">新增</a>
                                             <a href="javascript:;" class="text-btn" id="ss_delete"><%=i18n.translate("web_delete")%></a>
                                         </td>
@@ -149,10 +148,10 @@ include('admin_web/header') %>
                                         <td>
                                             <select id="ss_runnin_mode" name="ss_runnin_mode" required="required" class="J_selectOriginal">
                                                 <option value="">请选择</option>
-                                                <option value="gfwlist">gfwlist模式</option>
-                                                <option value="game">游戏模式</option>
-                                                <option value="web">网页模式</option>
-                                                <option value="all">全局模式</option>
+                                                <option value="gfwlist">域名列表模式</option>
+                                                <option value="game">游戏模式(所有TCP端口)</option>
+                                                <option value="web">网页模式(仅TCP80和443端口)</option>
+                                                <option value="all">全局模式(不区分国内外IP)</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -244,6 +243,7 @@ include('admin_web/header') %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_list"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                     <div class="G-form-main-bd">
@@ -263,6 +263,7 @@ include('admin_web/header') %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_ignore"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                 </div>
@@ -273,7 +274,7 @@ include('admin_web/header') %>
                         <span class="G-handle right go_back">
                             <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
                         </span>
-                        <span class="icon setting"></span><span>MAC列表管理</span>
+                        <span class="icon setting"></span><span>设备黑名单管理</span>
                     </div>
                     <div class="G-form-main-bd">
                         <div class="ss-panel">
@@ -289,6 +290,7 @@ include('admin_web/header') %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_mac_list"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                 </div>

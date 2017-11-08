@@ -22,12 +22,17 @@
 理论支持极路由所有型号，需升级至官方固件最新版:bangbang:
 
 ## 安装步骤：
-- 第一步：ROOT
-  - 绑定极小号并申请成为开发者(极路由后台->智能插件->路由器信息->高级设置->申请成为开发者)
-  - 完成上一步后，便可以安装「开发者模式」这个插件（装完这个插件也就是ROOT成功了）。
-  - 认真看「开发者模式」的说明，并进入极路由的ssh（Windows平台需下载ssh客户端：putty [下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)，[截图4](screenshots/04.putty.png)，[截图5](screenshots/05.login.png)）。
-- 第二步：
-  - 进入极路由的ssh，执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
+- 工具准备：
+  - Windows需下载ssh客户端：putty（[点此下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)）
+- 第一步：申请开发者模式
+  - 登录极路由后台->智能插件->路由器信息->高级设置->申请开发者模式(新路由器要15天后才能申请)
+- 第二步：开启ssh服务
+  - 安装「开发者模式」这个插件既可开启ssh服务
+- 第三步：登录ssh
+  - 使用ssh客户端连接路由器的IP地址(一般是192.168.199.1)和1022端口（[截图4](screenshots/04.putty.png)）
+  - 登录ssh需要帐号密码，帐号是root，密码一般就是wifi密码（[截图5](screenshots/05.login.png)）
+- 第四步：安装FIFA助手
+  - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
