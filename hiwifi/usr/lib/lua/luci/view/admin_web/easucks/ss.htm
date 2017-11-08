@@ -44,10 +44,10 @@ action = {
             ss_server_choice = luci.sys.exec("uci -q get easucks.ss_server_choice")
         end
         if ss_server_choice == '' then
-            json = '{"ss_server_choices": ["server1"], "ss_server_choice": "server1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "easucks", "ss_server_auth": "false", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}' 
+            json = '{"ss_server_choices": {"server1": "服务器1"}, "ss_server_choice": "server1", "ss_server_name": "服务器1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "easucks", "ss_server_auth": "false", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}'
         else
             ss_server_choice = string.gsub(ss_server_choice, '\n', '')
-            local ss_server_choices = luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | awk -F= '{if($2==\"node\"){servers[$1]++;}}END{print \"[\"; for(i in servers){print \"\\42\"i\"\\42,\";} print \"]\"}' | tr '\\n' ' ' | sed 's/, ]/ ]/'")
+            local ss_server_choices = luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | egrep 'ss_server_name|node' | sed 's/.ss_server_name//g' | awk -F= '{servers[$1]=$2}END{print \"{\"; for(i in servers){if(servers[i]==\"node\") print \"\\42\"i\"\\42: \\42\"i\"\\42,\"; else print \"\\42\"i\"\\42: \\42\"servers[i]\"\\42,\";} print \"}\"}' | tr '\\n' ' ' | sed 's/, ]/ ]/'")
             local ss_config = luci.sys.exec("uci show easucks."..ss_server_choice.." | grep easucks."..ss_server_choice..". | sed 's/easucks\\."..ss_server_choice.."\\.//g' | awk -F= '{config[$1]=$2;}END{for(i in config){print \"\\42\"i\"\\42: \\42\"config[i]\"\\42,\"}}' | tr '\\n' ' ' | sed 's/, $/ /g'")
             json = string.gsub('{"ss_server_choices": '..ss_server_choices..', "ss_server_choice": "'..ss_server_choice..'", '..ss_config..'}', ', }', '}')
         end
@@ -55,26 +55,24 @@ action = {
     -- 保存服务器
     ['save'] = function()
         luci.sys.exec('touch '..ss_config_path..';')
-        if ss_server_choice ~= ss_server_name then
-            luci.sys.exec('uci rename easucks.'..ss_server_choice..'='..ss_server_name..';')
-        end
-        luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_name..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'=node;')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_server_ipad='..ss_server_ipad..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_server_port='..ss_server_port..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_server_pass='..ss_server_pass..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_server_meth='..ss_server_meth..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_server_auth='..ss_server_auth..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_server_fsop='..ss_server_fsop..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_runnin_mode='..ss_runnin_mode..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_remote_dnss='..ss_remote_dnss..';')
-        luci.sys.exec('uci set easucks.'..ss_server_name..'.ss_local_port='..ss_local_port..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'=node;')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_name='..ss_server_name..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_ipad='..ss_server_ipad..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_port='..ss_server_port..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_pass='..ss_server_pass..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_meth='..ss_server_meth..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_auth='..ss_server_auth..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_fsop='..ss_server_fsop..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_runnin_mode='..ss_runnin_mode..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_remote_dnss='..ss_remote_dnss..';')
+        luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_local_port='..ss_local_port..';')
         luci.sys.exec('uci commit;')
         json = '{"state": 1}'
     end,
     -- 删除服务器
     ['delete'] = function()
         luci.sys.exec('uci delete easucks.'..ss_server_choice..';')
+        luci.sys.exec('uci commit;')
         ss_server_choice = string.gsub(luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | awk -F= '{if($2==\"node\") print $1;}' | head -1"), '\n', '')
         luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
         luci.sys.exec('uci commit;')

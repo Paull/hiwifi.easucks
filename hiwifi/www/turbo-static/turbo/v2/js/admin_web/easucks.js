@@ -93,13 +93,17 @@ $(function () {
             SS['config'] = data;
             if(! $.isEmptyObject(SS['config'])){
                 var i;
-                // 填写各种值
+                // 填充各项表单
                 $('#ss_server_choice').empty();
                 for(i in data['ss_server_choices']){
-                    $('#ss_server_choice').append('<option value="'+data['ss_server_choices'][i]+'">'+data['ss_server_choices'][i]+'</option>');
+                    $('#ss_server_choice').append('<option value="'+i+'">'+data['ss_server_choices'][i]+'</option>');
                 }
                 $('#ss_server_choice').val(data['ss_server_choice']);
-                $('#ss_server_name').val(data['ss_server_choice']);
+                if('ss_server_name' in data){
+                    $('#ss_server_name').val(data['ss_server_name']);
+                }else{
+                    $('#ss_server_name').val(data['ss_server_choice']);
+                }
                 $('#ss_server_ipad').val(data['ss_server_ipad']);
                 $('#ss_server_port').val(data['ss_server_port']);
                 $('#ss_server_pass').val(data['ss_server_pass']);
@@ -406,15 +410,15 @@ $(function () {
         }, 'json');
     });
 
-    //SS 提交表单
+    //SS 保存按钮
     $("#submit_ss").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
             return;
         }
         $bt.addClass("disable");
-        HiWiFi.formElementTrim($("#ss_setup form"), ["password", ""]);
         var $form = $("#ss_setup form");
+        HiWiFi.formElementTrim($form, ["password", ""]);
         if (!$form.valid()) {
             $bt.removeClass("disable");
             return;
@@ -458,7 +462,8 @@ $(function () {
                 $bt.removeClass("disable").text('重启');
             }, 'json');
         };
-        if ($("#ss_setup form").serialize() != SS['formdata']) {
+        //save first if form data has modified
+        if ($form.serialize() != SS['formdata']) {
             $bt.text(HiWiFi.i18n.prop("g_retaining"));
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
@@ -496,7 +501,8 @@ $(function () {
                 $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_start"));
             }, 'json');
         };
-        if ($("#ss_setup form").serialize() != SS['formdata']) {
+        //save first if form data has modified
+        if ($form.serialize() != SS['formdata']) {
             $bt.text(HiWiFi.i18n.prop("g_retaining"));
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
@@ -624,16 +630,16 @@ $(function () {
         showInputElementError: false,
         rules: {
             ss_server_choice: {required: true, alphanumber: true},
-            ss_server_name: {required: true, alphanumber: true},
+            ss_server_name: {required: true, nameMaxLength: 30}, //名字最多30个字节，10个中文
             ss_server_ipad: {required: true, trimSapceAndIpcheck: true},
             ss_server_port: {required: true, positiveInteger: true},
-            ss_server_pass: {required: true},
+            ss_server_pass: {required: true, headAndTailNotSapce: true},
             ss_server_meth: {required: true},
             ss_runnin_mode: {required: true},
             ss_remote_dnss: {required: true}
         },
         messages: {
-            ss_server_choice: {required: '请选择服务器', alphanumber: '请修改别名'},
+            ss_server_choice: {required: '请选择服务器', alphanumber: '服务器标识名出错'},
             ss_server_name: {required: '请填写服务器别名'},
             ss_server_ipad: {required: '请填写服务器地址'},
             ss_server_port: {required: '请填写服务器端口'},
@@ -647,11 +653,9 @@ $(function () {
         }
     });
 
-    //SS服务器别名修改时反馈到服务器选择中
+    //SS服务器别名修改时，修改结果实时反馈到服务器选择列表中
     $('#ss_server_name').on('keyup', function(){
         var _this = this;
-        console.log($(this).val());
-        console.log($(_this).val());
         $('#ss_server_choice option:selected').text($(_this).val());
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
@@ -662,14 +666,16 @@ $(function () {
 
     //创建SS服务器配置
     $('#ss_create').on('click', function(){
-        var random_name = 'server'+Math.round(Math.random()*10000);
-        $('#ss_server_choice').append('<option value="'+random_name+'">'+random_name+'</option>').val(random_name);
+        var random_number = Math.round(Math.random()*10000);
+        var random_node = 'server'+random_number;
+        var random_name = '服务器'+Math.round(Math.random()*10000);
+        $('#ss_server_choice').append('<option value="'+random_node+'">'+random_name+'</option>').val(random_node);
         $('#ss_server_name').val(random_name).select();
-        $('#ss_server_ipad').val('');
-        $('#ss_server_port').val('');
-        $('#ss_server_pass').val('');
-        $('#ss_server_meth').val('');
-        $('#ss_runnin_mode').val('');
+        $('#ss_server_ipad').val('xxx.xxx.xxx.xxx');
+        $('#ss_server_port').val('1717');
+        $('#ss_server_pass').val('easucks');
+        $('#ss_server_meth').val('rc4-md5');
+        $('#ss_runnin_mode').val('gfwlist');
         $('#ss_server_auth').val('false');
         $('#ss_server_fsop').val('false');
         $('#ss_remote_dnss').val('8.8.4.4');
