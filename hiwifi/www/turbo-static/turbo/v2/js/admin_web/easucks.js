@@ -94,15 +94,15 @@ $(function () {
             if(! $.isEmptyObject(SS['config'])){
                 var i;
                 // 填充各项表单
-                $('#ss_server_choice').empty();
-                for(i in data['ss_server_choices']){
-                    $('#ss_server_choice').append('<option value="'+i+'">'+data['ss_server_choices'][i]+'</option>');
+                $('#ss_server_nodes').empty();
+                for(i in data['ss_servers']){
+                    $('#ss_server_nodes').append('<option value="'+i+'">'+data['ss_servers'][i]+'</option>');
                 }
-                $('#ss_server_choice').val(data['ss_server_choice']);
+                $('#ss_server_nodes').val(data['ss_server_choice']);
                 if('ss_server_name' in data){
                     $('#ss_server_name').val(data['ss_server_name']);
                 }else{
-                    $('#ss_server_name').val(data['ss_server_choice']);
+                    $('#ss_server_name').val('未命名节点');
                 }
                 $('#ss_server_ipad').val(data['ss_server_ipad']);
                 $('#ss_server_port').val(data['ss_server_port']);
@@ -127,7 +127,7 @@ $(function () {
                 }
                 HiWiFi.changeSelectToDiv();
                 //SS服务器列表点击事件
-                $('#ss_server_choice').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
+                $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
                     getSSconfig($(this).text());
                 });
             }
@@ -543,7 +543,7 @@ $(function () {
         }
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
-        getSSconfig($('#ss_server_choice').val());
+        getSSconfig($('#ss_server_nodes').val());
         getSSstatus(false);
         setTimeout(function(){$bt.removeClass("disable").text(HiWiFi.i18n.prop("g_refresh"));}, 3000);
     });
@@ -613,14 +613,14 @@ $(function () {
     });
 
     //SS服务器别名的特殊判断
-    jQuery.validator.addMethod("alphanumber", function (value, element) {
+    jQuery.validator.addMethod("noSpecialChars", function (value, element) {
         "use strict";
-        if(/^[a-zA-Z][a-zA-Z0-9]*$/.test(value)){
-            return this.optional(element) || true;
-        }else{
+        if(/[\[\]\(\)\{\}\<\>\.\=\;]/.test(value)){
             return this.optional(element) || false;
+        }else{
+            return this.optional(element) || true;
         }
-    }, "密码只能包含字母及数字且以字母开头");
+    }, "别名不能包含[](){}<>.=;等特殊字符");
 
     //自定义SS表单验证
     $("#ss_setup form").validate({
@@ -629,8 +629,8 @@ $(function () {
         ignore: "",
         showInputElementError: false,
         rules: {
-            ss_server_choice: {required: true, alphanumber: true},
-            ss_server_name: {required: true, nameMaxLength: 30}, //名字最多30个字节，10个中文
+            ss_server_choice: {required: true},
+            ss_server_name: {required: true, headAndTailNotSapce: true, noSpecialChars: true, nameMaxLength: 30},
             ss_server_ipad: {required: true, trimSapceAndIpcheck: true},
             ss_server_port: {required: true, positiveInteger: true},
             ss_server_pass: {required: true, headAndTailNotSapce: true},
@@ -639,8 +639,8 @@ $(function () {
             ss_remote_dnss: {required: true}
         },
         messages: {
-            ss_server_choice: {required: '请选择服务器', alphanumber: '服务器标识名出错'},
-            ss_server_name: {required: '请填写服务器别名'},
+            ss_server_choice: {required: '请选择服务器'},
+            ss_server_name: {required: '请填写服务器别名', nameMaxLength: '别名最长30个字节或10个中文字'},
             ss_server_ipad: {required: '请填写服务器地址'},
             ss_server_port: {required: '请填写服务器端口'},
             ss_server_pass: {required: '请填写SS通讯密码'},
@@ -656,10 +656,11 @@ $(function () {
     //SS服务器别名修改时，修改结果实时反馈到服务器选择列表中
     $('#ss_server_name').on('keyup', function(){
         var _this = this;
-        $('#ss_server_choice option:selected').text($(_this).val());
+        $("#ss_setup form").valid();
+        $('#ss_server_nodes option:selected').text($(_this).val());
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
-        $('#ss_server_choice').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
+        $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
             getSSconfig($(this).text());
         });
     });
@@ -669,7 +670,7 @@ $(function () {
         var random_number = Math.round(Math.random()*10000);
         var random_node = 'server'+random_number;
         var random_name = '服务器'+Math.round(Math.random()*10000);
-        $('#ss_server_choice').append('<option value="'+random_node+'">'+random_name+'</option>').val(random_node);
+        $('#ss_server_nodes').append('<option value="'+random_node+'">'+random_name+'</option>').val(random_node);
         $('#ss_server_name').val(random_name).select();
         $('#ss_server_ipad').val('xxx.xxx.xxx.xxx');
         $('#ss_server_port').val('1717');
@@ -682,7 +683,7 @@ $(function () {
         $('#ss_local_port').val('61717');
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
-        $('#ss_server_choice').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
+        $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
             getSSconfig($(this).text());
         });
     });
@@ -691,7 +692,7 @@ $(function () {
     $('#ss_delete').on('click', function(){
         var request_data = {
             'act': 'delete',
-            'ss_server_choice': $('#ss_server_choice').val()
+            'ss_server_choice': $('#ss_server_nodes').val()
         };
         $.post('easucks/ss', request_data, function(data){
             getSSconfig();

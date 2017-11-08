@@ -4,7 +4,7 @@
     Author    Paull  <paull@qq.com>
     Copyright 2016
 ]]--
-local version  = "1.4.5d"
+local version  = "1.4.5l"
 local i18n = require "luci.i18n"
 include('admin_web/header') %>
 <link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/admin_web/net.css?v=<%=version%>">
@@ -90,7 +90,7 @@ include('admin_web/header') %>
                                     <tr>
                                         <th>服务器选择</th>
                                         <td>
-                                            <select id="ss_server_choice" name="ss_server_choice" class="J_selectOriginal"></select>
+                                            <select id="ss_server_nodes" name="ss_server_choice" class="J_selectOriginal"></select>
                                             <a href="javascript:;" class="text-btn" id="ss_create">新增</a>
                                             <a href="javascript:;" class="text-btn" id="ss_delete"><%=i18n.translate("web_delete")%></a>
                                         </td>
