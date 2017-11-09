@@ -157,7 +157,7 @@ $(function () {
                 $('#ss_stop').show();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_connected"));
                 if(typeof(SS['config']) == 'object' && 'ss_runnin_mode' in SS['config'])
-                    $("#ss_status").children(':last').text($('#ss_status').children(':last').text() + '(' + $("#ss_runnin_mode option[value='"+SS['config']['ss_runnin_mode']+"']").text() + ')');
+                    $("#ss_status").children(':last').text($('#ss_status').children(':last').text() + '(' + $("#ss_runnin_mode option[value='"+SS['config']['ss_runnin_mode']+"']").text().replace(/\(.*\)/, "") + ')');
             }else{
                 $("#ss_status").children(':first').removeClass("icon-j").addClass("icon-x");
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_not_connected"));
