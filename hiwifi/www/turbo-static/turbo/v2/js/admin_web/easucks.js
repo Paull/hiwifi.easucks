@@ -111,13 +111,6 @@ $(function () {
                 $('#ss_runnin_mode').val(data['ss_runnin_mode']);
                 $('#ss_remote_dnss').val(data['ss_remote_dnss'] ? data['ss_remote_dnss'] : '8.8.4.4');
                 $('#ss_local_port').val(data['ss_local_port'] ? data['ss_local_port'] : '61717');
-                if (data['ss_server_auth'] == "true") {
-                    $('#ss_server_auth').siblings("input").val("true");
-                    $('#ss_server_auth').removeClass("off").addClass("on");
-                }else{
-                    $('#ss_server_auth').siblings("input").val("false");
-                    $('#ss_server_auth').removeClass("on").addClass("off");
-                }
                 if (data['ss_server_fsop'] == "true") {
                     $('#ss_server_fsop').siblings("input").val("true");
                     $('#ss_server_fsop').removeClass("off").addClass("on");
@@ -549,7 +542,7 @@ $(function () {
     });
 
     //一次性验证和fastopen选项的按钮
-    $("#ss_server_auth, #ss_server_fsop").click(function (e) {
+    $("#ss_server_fsop").click(function (e) {
         var $bt = $(this);
         var $input = $bt.siblings('input');
         if ($bt.hasClass("on")) {
@@ -559,20 +552,6 @@ $(function () {
             $bt.removeClass("off").addClass("on");
             $input.val('true');
         }
-    });
-
-    //一次性验证开关的提示
-    $("#ss_server_auth").next('span.J_Tip').hover(function () {
-        var $tipPop = $('.J_ss_auth_tip_text');
-        var $this = $(this),
-            l = $this.offset().left - 15,
-            t = $this.offset().top + 20;
-        $tipPop.css({
-            'left': l + 'px',
-            'top': t + 'px'
-        }).show();
-    }, function () {
-        $('.J_ss_auth_tip_text').hide();
     });
 
     //FASTOPEN开关的提示
@@ -677,7 +656,6 @@ $(function () {
         $('#ss_server_pass').val('easucks');
         $('#ss_server_meth').val('rc4-md5');
         $('#ss_runnin_mode').val('gfwlist');
-        $('#ss_server_auth').val('false');
         $('#ss_server_fsop').val('false');
         $('#ss_remote_dnss').val('8.8.4.4');
         $('#ss_local_port').val('61717');

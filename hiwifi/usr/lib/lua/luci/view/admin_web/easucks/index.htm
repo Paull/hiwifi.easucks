@@ -178,14 +178,6 @@ include('admin_web/header') %>
                                             <a href="javascript:;" class="G-switch-btn off btn" id="ss_auto_start"><span></span></a>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>一次性验证</th>
-                                        <td style="padding-top:10px;">
-                                            <input type="hidden" name="ss_server_auth" value="false" />
-                                            <a href="javascript:;" class="G-switch-btn off" id="ss_server_auth"><span></span></a>
-                                            <span class="icon icon22 J_Tip G-handle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 5px;"></span>
-                                        </td>
-                                    </tr>
                                     <tr style="display: none;">
                                         <th>fastopen</th>
                                         <td style="padding-top:10px;">
@@ -297,7 +289,6 @@ include('admin_web/header') %>
             </div>
         </div>
     </div>
-<div class="G-tip-pop J_ss_auth_tip_text" style="width: 170px; height: 16px; display: none">需与服务器设定一致，默认关闭</div>
 <div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
 <% include('admin_web/footer') %>
 <!-- 通用模块的专属js -->

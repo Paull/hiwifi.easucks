@@ -20,7 +20,6 @@ ss_get_config() {
     ss_server_meth=$(uci get $NAME.$ss_server_choice.ss_server_meth)
     ss_runnin_mode=$(uci get $NAME.$ss_server_choice.ss_runnin_mode)
     ss_remote_dnss=$(uci get $NAME.$ss_server_choice.ss_remote_dnss)
-    ss_server_auth=$(uci get $NAME.$ss_server_choice.ss_server_auth)
     ss_server_fsop=$(uci get $NAME.$ss_server_choice.ss_server_fsop)
     ss_local_port=$(uci get $NAME.$ss_server_choice.ss_local_port)
 }
@@ -36,7 +35,6 @@ ss_create_config_file(){
     "password": "$ss_server_pass",
     "method": "$ss_server_meth",
     "timeout": 60,
-    "auth": $ss_server_auth,
     "fast_open": $ss_server_fsop,
     "mode": "tcp_only"
 }
