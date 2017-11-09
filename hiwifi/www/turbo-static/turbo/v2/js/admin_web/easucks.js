@@ -128,7 +128,7 @@ $(function () {
                 HiWiFi.changeSelectToDiv();
                 //SS服务器列表点击事件
                 $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-                    getSSconfig($(this).text());
+                    getSSconfig($('#ss_server_nodes').find("option:contains('"+$(this).text()+"')").val());
                 });
             }
         }, 'json');
@@ -661,7 +661,7 @@ $(function () {
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
         $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-            getSSconfig($(this).text());
+            getSSconfig($('#ss_server_nodes').find("option:contains('"+$(this).text()+"')").val());
         });
     });
 
@@ -684,7 +684,7 @@ $(function () {
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
         $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-            getSSconfig($(this).text());
+            getSSconfig($('#ss_server_nodes').find("option:contains('"+$(this).text()+"')").val());
         });
     });
 
