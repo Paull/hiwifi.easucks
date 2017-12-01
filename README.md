@@ -59,6 +59,9 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 - [x] 保存多个SS服务器配置的功能
 - [x] 域名白名单功能
 - [x] 保存SS列表时支持中文别名
+- [ ] 服务器地址支持保存域名，启动时自动判断是域名则解析成IP后再启动
+- [ ] 提供离线安装包
+- [ ] 尝试Cross Compile，提供大于3.0的ss版本
 - [ ] 扩展SS状态的判断，现在的SS状态只判断了进程是否启动，未判断DNS和iptables等信赖服务的状态
 - [ ] 区分自定义和傻瓜式两种界面
 - [ ] 查看匹配对手的IP或周赛服务器的IP
