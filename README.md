@@ -11,16 +11,16 @@
 - 查看服务器IP（开发中）：类似查看对手，但FIFA的Pro模式和FUT Champions模式是通过服务器转发而非P2P直连的，看不到对手的IP，所以只能看到决定你延时多少的其中一半因素--->服务器IP。
 
 ## 支持的路由器型号及固件
-路由器型号 | 官方固件<1.2.5 | 官方固件 >= 1.2.5 | 非官方固件
------------- | ------------- | ------------- | -------------
-极1s | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极2 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极3 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极4增强版 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极Enjoy | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极路由x美的 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
-极路由其它 | :heavy_multiplication_x:不支持 | :interrobang:待测 | :heavy_multiplication_x:不支持
-理论支持极路由所有型号，需升级至官方固件最新版:bangbang:
+路由器型号 | 官方固件<1.2.5 | 官方固件 >= 1.2.5 | 非官方固件 |
+------------ | ------------- | ------------- | ------------- |
+极1s | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极2 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极3 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极4增强版 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极Enjoy | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极路由x美的 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极路由其它 | :heavy_multiplication_x:不支持 | :interrobang:待测 | :heavy_multiplication_x:不支持 |
+理论支持极路由所有型号，需升级至官方固件最新版:bangbang: 
 
 ## 安装步骤：
 - 工具准备：
@@ -54,7 +54,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 - 1.4.5
   - 保存SS列表时支持中文别名、更新内置的域名列表
 - 1.4.5a
-  - 服务器地址支持使用域名格式，启动时先解析成IP
+  - 服务器地址支持使用域名格式，启动时先解析成IP
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
