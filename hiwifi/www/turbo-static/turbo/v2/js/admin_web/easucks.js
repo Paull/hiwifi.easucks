@@ -124,6 +124,7 @@ $(function () {
                     getSSconfig($(this).parent('li').data('value'));
                 });
             }
+            getSSstatus(true);
         }, 'json');
     }
 
@@ -161,7 +162,7 @@ $(function () {
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
 
-            $("#current_way").text(data['ss_choice']);
+            $("#current_way").text(SS['config']['ss_servers'][data['ss_choice']]);
 
             //显示样式,去除loding
             $('#ss_stauts_area').children(':eq(0)').hide();
@@ -206,7 +207,6 @@ $(function () {
         muti_call.send();
         getClientInfo();
         getSSconfig();
-        getSSstatus(true);
         get_my_list();
         get_my_ignore();
         get_mac_list();
@@ -537,7 +537,6 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
         getSSconfig($('#ss_server_nodes').val());
-        getSSstatus(false);
         setTimeout(function(){$bt.removeClass("disable").text(HiWiFi.i18n.prop("g_refresh"));}, 3000);
     });
 
@@ -601,6 +600,16 @@ $(function () {
         }
     }, "别名不能包含[](){}<>.=;等特殊字符");
 
+    //SS服务器地址的特殊判断
+    jQuery.validator.addMethod("ipAndDomainCheck", function (value, element) {
+        "use strict";
+        if(/[a-z]/i.test(value)){
+            return this.optional(element) || /^([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]{2,6}$/i.test(value);
+        }else{
+            return this.optional(element) || /^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})){3}$/.test(value);
+        }
+    }, "请输入正确的域名或IP地址");
+
     //自定义SS表单验证
     $("#ss_setup form").validate({
         errorElement: 'p',
@@ -610,7 +619,7 @@ $(function () {
         rules: {
             ss_server_choice: {required: true},
             ss_server_name: {required: true, headAndTailNotSapce: true, noSpecialChars: true, nameMaxLength: 30},
-            ss_server_ipad: {required: true, trimSapceAndIpcheck: true},
+            ss_server_ipad: {required: true, ipAndDomainCheck: true, maxlength: 48},
             ss_server_port: {required: true, positiveInteger: true},
             ss_server_pass: {required: true, headAndTailNotSapce: true},
             ss_server_meth: {required: true},
@@ -620,7 +629,7 @@ $(function () {
         messages: {
             ss_server_choice: {required: '请选择服务器'},
             ss_server_name: {required: '请填写服务器别名', nameMaxLength: '别名最长30个字节或10个中文字'},
-            ss_server_ipad: {required: '请填写服务器地址'},
+            ss_server_ipad: {required: '请填写服务器地址', maxlength: 'IP地址最长15个字符，域名最长48个字符'},
             ss_server_port: {required: '请填写服务器端口'},
             ss_server_pass: {required: '请填写SS通讯密码'},
             ss_server_meth: {required: '请选择SS加密算法'},
