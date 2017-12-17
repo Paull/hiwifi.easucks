@@ -124,6 +124,7 @@ $(function () {
                     getSSconfig($(this).parent('li').data('value'));
                 });
             }
+            getSSstatus(true);
         }, 'json');
     }
 
@@ -161,13 +162,7 @@ $(function () {
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
 
-            setTimeout(function(){
-                if(typeof SS['config'] != 'undefined'){
-                    $("#current_way").text(SS['config']['ss_servers'][data['ss_choice']]);
-                }else{
-                    getSSstatus(false);
-                }
-            }, 1000);
+            $("#current_way").text(SS['config']['ss_servers'][data['ss_choice']]);
 
             //显示样式,去除loding
             $('#ss_stauts_area').children(':eq(0)').hide();
@@ -212,7 +207,6 @@ $(function () {
         muti_call.send();
         getClientInfo();
         getSSconfig();
-        getSSstatus(true);
         get_my_list();
         get_my_ignore();
         get_mac_list();
@@ -543,7 +537,6 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
         getSSconfig($('#ss_server_nodes').val());
-        getSSstatus(false);
         setTimeout(function(){$bt.removeClass("disable").text(HiWiFi.i18n.prop("g_refresh"));}, 3000);
     });
 
