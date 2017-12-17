@@ -161,7 +161,13 @@ $(function () {
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
 
-            $("#current_way").text(data['ss_choice']);
+            setTimeout(function(){
+                if(typeof SS['config'] != 'undefined'){
+                    $("#current_way").text(SS['config']['ss_servers'][data['ss_choice']]);
+                }else{
+                    getSSstatus(false);
+                }
+            }, 1000);
 
             //显示样式,去除loding
             $('#ss_stauts_area').children(':eq(0)').hide();
@@ -605,11 +611,11 @@ $(function () {
     jQuery.validator.addMethod("ipAndDomainCheck", function (value, element) {
         "use strict";
         if(/[a-z]/i.test(value)){
-			return this.optional(element) || /^([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]{2,6}$/i.test(value);
+            return this.optional(element) || /^([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]{2,6}$/i.test(value);
         }else{
-			return this.optional(element) || /^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})){3}$/.test(value);
+            return this.optional(element) || /^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})){3}$/.test(value);
         }
-	}, "请输入正确的域名或IP地址");
+    }, "请输入正确的域名或IP地址");
 
     //自定义SS表单验证
     $("#ss_setup form").validate({
