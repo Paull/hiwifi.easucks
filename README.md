@@ -18,6 +18,7 @@
 极3 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
 极4增强版 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
 极Enjoy | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
+极路由x美的 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持
 极路由其它 | :heavy_multiplication_x:不支持 | :interrobang:待测 | :heavy_multiplication_x:不支持
 理论支持极路由所有型号，需升级至官方固件最新版:bangbang:
 
@@ -52,6 +53,8 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
   - 固件1.4.5的CSS文件夹有变动导致首页和SS插件页不能显示正常风格，新版插件已支持固件1.4.5，需重新安装
 - 1.4.5
   - 保存SS列表时支持中文别名、更新内置的域名列表
+- 1.4.5a
+  - 服务器地址支持使用域名格式，启动时先解析成IP
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
@@ -59,7 +62,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 - [x] 保存多个SS服务器配置的功能
 - [x] 域名白名单功能
 - [x] 保存SS列表时支持中文别名
-- [ ] 服务器地址支持保存域名，启动时自动判断是域名则解析成IP后再启动
+- [x] 服务器地址支持保存域名，启动时自动判断是域名则解析成IP后再启动
 - [ ] 提供离线安装包
 - [ ] 尝试Cross Compile，提供大于3.0的ss版本
 - [ ] 扩展SS状态的判断，现在的SS状态只判断了进程是否启动，未判断DNS和iptables等信赖服务的状态
