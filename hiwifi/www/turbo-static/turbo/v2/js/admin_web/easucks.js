@@ -444,7 +444,8 @@ $(function () {
         $bt.addClass("disable");
         var ss_restart = function(){
             $bt.text('重启中...');
-            var request_data = {'act': 'restart'};
+            var request_data = {'act': 'restart', 'ss_server_choice': $('#ss_server_nodes').val()};
+            console.log(request_data);
             $.post('easucks/ss', request_data, function(data){
                 getSSstatus(true);
                 HiWiFi.popDialog({
@@ -483,7 +484,7 @@ $(function () {
         $bt.addClass("disable");
         var ss_start = function(){
             $bt.text(HiWiFi.i18n.prop("g_startting"));
-            var request_data = {'act': 'start'};
+            var request_data = {'act': 'start', 'ss_server_choice': $('#ss_server_nodes').val()};
             $.post('easucks/ss', request_data, function(data){
                 getSSstatus(true);
                 HiWiFi.popDialog({
