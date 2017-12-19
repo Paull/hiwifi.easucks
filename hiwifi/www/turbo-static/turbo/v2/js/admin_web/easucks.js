@@ -445,7 +445,6 @@ $(function () {
         var ss_restart = function(){
             $bt.text('重启中...');
             var request_data = {'act': 'restart', 'ss_server_choice': $('#ss_server_nodes').val()};
-            console.log(request_data);
             $.post('easucks/ss', request_data, function(data){
                 getSSstatus(true);
                 HiWiFi.popDialog({
