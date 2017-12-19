@@ -55,6 +55,8 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
   - 保存SS列表时支持中文别名、更新内置的域名列表
 - 1.4.5a
   - 服务器地址支持使用域名格式，启动时先解析成IP
+- 1.4.5b
+  - 修复上个版本修改引起的启动、重启逻辑错误
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
