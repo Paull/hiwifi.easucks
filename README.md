@@ -34,6 +34,10 @@
   - 登录ssh需要帐号密码，帐号是root，密码一般就是wifi密码（[截图5](screenshots/05.login.png)）
 - 第四步：安装FIFA助手
   - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
+  
+## 升级方法
+- 重新安装既可，不会覆盖配置数据
+- 因为已经root过，仅需执行安装步骤中的第四步
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
