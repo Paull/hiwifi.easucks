@@ -24,7 +24,7 @@ ss_get_config() {
     ss_local_port=$(uci get $NAME.$ss_server_choice.ss_local_port)
 
     # nslookup if ss_server_ipad is a domain
-    [ $(echo $ss_server_ipad|grep -E '[a-zA-Z]'|wc -l) -gt 0 ] && { ss_server_ipad=$(nslookup $ss_server_ipad|tr '\n' ' '|sed 's/  / /g'|cut -d ' ' -f 14); }
+    [ $(echo $ss_server_ipad|grep -E '[a-zA-Z]'|wc -l) -gt 0 ] && { ss_server_ipad=$(ping -q -c 1 -t 1 $ss_server_ipad|grep PING|tr '()' ' '|cut -d ' ' -f 4); }
     # use domain if nslookup or regex command failed
     [ $(echo $ss_server_ipad|grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'|wc -l) -lt 1 ] && { s_server_ipad=$(uci get $NAME.$ss_server_choice.ss_server_ipad); }
 }
