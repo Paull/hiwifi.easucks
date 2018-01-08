@@ -11,6 +11,9 @@
 /usr/lib/lua/luci/view/admin_web/home.htm
 /usr/lib/lua/luci/view/admin_web/network/index.htm
 /usr/lib/lua/luci/view/admin_web/easucks/index.htm
-/usr/lib/lua/luci/view/admin_web/easucks/ss.htm
+/usr/lib/lua/luci/view/admin_web/easucks/ss_ajax.htm
+/usr/lib/lua/luci/view/admin_web/easucks/ss_setup_mac.htm
+/usr/lib/lua/luci/view/admin_web/easucks/ss_setup_node.htm
+/usr/lib/lua/luci/view/admin_web/easucks/ss_setup_domain.htm
 /usr/lib/lua/luci/controller/admin_web/easucks.lua
 /www/turbo-static/turbo/v2/js/admin_web/easucks.js

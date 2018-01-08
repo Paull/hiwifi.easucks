@@ -89,7 +89,7 @@ $(function () {
             'act': 'config',
             'ss_server_choice': choice ? choice : ''
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             SS['config'] = data;
             if(! $.isEmptyObject(SS['config'])){
                 var i;
@@ -130,7 +130,7 @@ $(function () {
 
     //获取SS运行信息
     function getSSstatus(formdata_refresh) {
-        $.post('easucks/ss', {'act': 'status'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'status'}, function(data){
             SS['status'] = data;
             //暂存表单内容，供稍后对比是否有改动时参考
             if (formdata_refresh)
@@ -172,21 +172,21 @@ $(function () {
 
     //获取强制走代理域名列表
     function get_my_list() {
-        $.post('easucks/ss', {'act': 'mylist'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'mylist'}, function(data){
             $('#domain_list_value').val(data);
         });
     }
 
     //获取强制不走代理域名列表
     function get_my_ignore() {
-        $.post('easucks/ss', {'act': 'myignore'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'myignore'}, function(data){
             $('#domain_ignore_value').val(data);
         });
     }
 
     //获取过滤设备列表
     function get_mac_list() {
-        $.post('easucks/ss', {'act': 'ignoremaclist'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'ignoremaclist'}, function(data){
             $('#mac_list_value').val(data);
         });
     }
@@ -349,7 +349,7 @@ $(function () {
             'act':  'mylist_save',
             'list': $('#domain_list_value').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -371,7 +371,7 @@ $(function () {
             'act':  'myignore_save',
             'list': $('#domain_ignore_value').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -393,7 +393,7 @@ $(function () {
             'act':  'ignoremaclist_save',
             'list': $('#mac_list_value').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -420,7 +420,7 @@ $(function () {
         var request_data = $form.serializeArray();
         request_data = HiWiFi.simplifyJSON(request_data);
         request_data['act'] = 'save';
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -445,7 +445,7 @@ $(function () {
         var ss_restart = function(){
             $bt.text('重启中...');
             var request_data = {'act': 'restart', 'ss_server_choice': $('#ss_server_nodes').val()};
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 getSSstatus(true);
                 HiWiFi.popDialog({
                     type: "G-text",
@@ -461,7 +461,7 @@ $(function () {
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
             request_data['act'] = 'save';
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 ss_restart();
             });
         }else{
@@ -484,7 +484,7 @@ $(function () {
         var ss_start = function(){
             $bt.text(HiWiFi.i18n.prop("g_startting"));
             var request_data = {'act': 'start', 'ss_server_choice': $('#ss_server_nodes').val()};
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 getSSstatus(true);
                 HiWiFi.popDialog({
                     type: "G-text",
@@ -500,7 +500,7 @@ $(function () {
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
             request_data['act'] = 'save';
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 ss_start();
             });
         }else{
@@ -517,7 +517,7 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
         var request_data = {'act': 'stop'};
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             getSSstatus(false);
             HiWiFi.popDialog({
                 type: "G-text",
@@ -579,7 +579,7 @@ $(function () {
 
             $bt.prop('disabled', true);
 
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 if (data['ss_enabled'] == 'false') {
                     $bt.removeClass("on").addClass("off");
                 }else{
@@ -681,7 +681,7 @@ $(function () {
             'act': 'delete',
             'ss_server_choice': $('#ss_server_nodes').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             getSSconfig();
             HiWiFi.popDialog({
                 type: "G-text",
