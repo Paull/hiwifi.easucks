@@ -6,9 +6,16 @@
 ]]--
 local version  = "1.4.5"
 local i18n = require "luci.i18n"
-include('admin_web/header') %>
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/net.css?v=<%=version%>">
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/admin_web/net.css?v=<%=version%>">
+include('admin_web/header')
+
+local css_location = luci.sys.exec("if [ -f resource..'/v2/style/net.css' ]; then echo -n true; else echo -n false; fi")
+if css_location == true then
+    css_location = resource..'/v2/style/net.css';
+else
+    css_location = resource..'/v2/style/admin_web/net.css';
+end
+%>
+<link rel="stylesheet" type="text/css" href="<%=css_location..'?v='..version%>">
 <div id="bd">
     <div class="com-main clearfix">
         <div id="right_part" class="G-rightSide">
