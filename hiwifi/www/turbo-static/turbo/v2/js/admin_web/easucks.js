@@ -1,97 +1,18 @@
-var SS = {};
 $(function () {
     "use strict";
-    /*
-     *******************************dataStore*******************************
-     */
-    //初始化数据仓库store
-    HiWiFi.dataStore({
-        client_info: {
-            mac: ""
-        },
-        system_info: {
-            os_uptime: 0,
-            lan_ip: ""
-        }
-    });
-
+    var g_data_ss = {};
     /*
      *******************************Interfaces*******************************
      */
-    //获取路由器系统状态
-    function getSystemInfo(muti_call) {
-        //构造 读取数据类型 接口callback的处理对象
-        var callback = HiWiFi.constructReadCallback(function (rsp, status, xhr) {
-            rsp = rsp || {};
-            xhr = xhr || {};
-            var data = rsp.data || {};
-            var uptime = data.uptime || 86400;
-            uptime = Math.ceil(uptime / 86400);
-            HiWiFi.dataStore.updateData("system_info", {
-                os_uptime: uptime
-            });
-
-        }, function (e) {
-            if (!muti_call) {
-                //独自调用时，failed后重试
-                HiWiFi.retry(getSystemInfo);
-            }
-        });
-
-        var request_configs = {
-            version: "v1"
-        };
-        return Openapi(muti_call).appendCall("wan.get_status", null, request_configs, callback);
-    }
-    //获取路由器lan端的状态
-    function getLanStatus(muti_call) {
-        //构造 读取数据类型 接口callback的处理对象
-        var callback = HiWiFi.constructReadCallback(function (rsp) {
-            rsp = rsp || {};
-            var data = rsp.data || {};
-            HiWiFi.dataStore.updateData("system_info", {
-                lan_ip: data.lan_ipv4 || ""
-            });
-
-        }, function (e) {
-            if (!muti_call) {
-                //独自调用时，failed后重试
-                HiWiFi.retry(getLanStatus);
-            }
-        });
-
-        var request_configs = {
-            version: "v1"
-        };
-        return Openapi(muti_call).appendCall("network.lan.get_lan_status", null, request_configs, callback);
-    }
-
-    //获取ClientInfo
-    function getClientInfo() {
-        HiWiFi.getRouterInfoFromLastRequest(function (data) {
-            var client_info = {};
-            if (data && data.app_data) {
-                client_info = data.app_data || {};
-                HiWiFi.dataStore.updateData("client_info", {
-                    mac: HiWiFi.formatMacAddress(client_info.link_device_mac, true)
-                });
-            } else {
-                setTimeout(function () {
-                    getClientInfo();
-                }, 1000);
-            }
-        });
-    }
-
     //获取SS配置信息
-    function getSSconfig(choice) {
+    function get_ss_config(choice) {
         var request_data = {
             'act': 'config',
             'ss_server_choice': choice ? choice : ''
         };
-        $.post('easucks/ss', request_data, function(data){
-            SS['config'] = data;
-            if(! $.isEmptyObject(SS['config'])){
+        $.post('easucks/ss_ajax', request_data, function(data){
+            g_data_ss['config'] = data;
+            if(! $.isEmptyObject(g_data_ss['config'])){
                 var i;
                 // 填充各项表单
                 $('#ss_server_nodes').empty();
@@ -121,20 +42,20 @@ $(function () {
                 HiWiFi.changeSelectToDiv();
                 //SS服务器列表点击事件
                 $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-                    getSSconfig($(this).parent('li').data('value'));
+                    get_ss_config($(this).parent('li').data('value'));
                 });
             }
-            getSSstatus(true);
+            get_ss_status(true);
         }, 'json');
     }
 
     //获取SS运行信息
-    function getSSstatus(formdata_refresh) {
-        $.post('easucks/ss', {'act': 'status'}, function(data){
-            SS['status'] = data;
+    function get_ss_status(formdata_refresh) {
+        $.post('easucks/ss_ajax', {'act': 'status'}, function(data){
+            g_data_ss['status'] = data;
             //暂存表单内容，供稍后对比是否有改动时参考
             if (formdata_refresh)
-                SS['formdata'] = $("#ss_setup form").serialize();
+                g_data_ss['formdata'] = $("#ss_setup_node form").serialize();
 
             if(data.ss_enabled == 'true'){
                 $('#ss_auto_start').removeClass('off').addClass('on');
@@ -150,8 +71,8 @@ $(function () {
                 $('.btn_ss_restart').show();
                 $('#ss_stop').show();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_connected"));
-                if(typeof(SS['config']) == 'object' && 'ss_runnin_mode' in SS['config'])
-                    $("#ss_status").children(':last').text($('#ss_status').children(':last').text() + '(' + $("#ss_runnin_mode option[value='"+SS['config']['ss_runnin_mode']+"']").text().replace(/\(.*\)/, "") + ')');
+                if(typeof(g_data_ss['config']) == 'object' && 'ss_runnin_mode' in g_data_ss['config'])
+                    $("#ss_status").children(':last').text($('#ss_status').children(':last').text() + '(' + $("#ss_runnin_mode option[value='"+g_data_ss['config']['ss_runnin_mode']+"']").text().replace(/\(.*\)/, "") + ')');
             }else{
                 $("#ss_status").children(':first').removeClass("icon-j").addClass("icon-x");
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_not_connected"));
@@ -162,7 +83,7 @@ $(function () {
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
 
-            $("#current_way").text(SS['config']['ss_servers'][data['ss_choice']]);
+            $("#current_way").text(g_data_ss['config']['ss_servers'][data['ss_choice']]);
 
             //显示样式,去除loding
             $('#ss_stauts_area').children(':eq(0)').hide();
@@ -172,21 +93,21 @@ $(function () {
 
     //获取强制走代理域名列表
     function get_my_list() {
-        $.post('easucks/ss', {'act': 'mylist'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'mylist'}, function(data){
             $('#domain_list_value').val(data);
         });
     }
 
     //获取强制不走代理域名列表
     function get_my_ignore() {
-        $.post('easucks/ss', {'act': 'myignore'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'myignore'}, function(data){
             $('#domain_ignore_value').val(data);
         });
     }
 
     //获取过滤设备列表
     function get_mac_list() {
-        $.post('easucks/ss', {'act': 'ignoremaclist'}, function(data){
+        $.post('easucks/ss_ajax', {'act': 'ignoremaclist'}, function(data){
             $('#mac_list_value').val(data);
         });
     }
@@ -197,16 +118,13 @@ $(function () {
             alias: "initializationDatas"
         };
         //获取 读取数据类型 接口callback的公共的默认处理对象
-        var muti_call_callbacks = HiWiFi.constructReadCallback();
-        muti_call_callbacks.requestError = function () {
-            HiWiFi.retry(initializationDatas, arguments);
-        };
-        var muti_call = Openapi.mutiCall(request_configs, muti_call_callbacks);
-        muti_call = getSystemInfo(muti_call);
-        muti_call = getLanStatus(muti_call);
-        muti_call.send();
-        getClientInfo();
-        getSSconfig();
+        var muti_call_callbacks = HiWiFi.constructReadCallback(null, function () {
+            //初始化失败，需要重试
+            HiWiFi.retry(initializationDatas);
+        });
+        Openapi.cancelRequest(request_configs.alias);
+
+        get_ss_config();
         get_my_list();
         get_my_ignore();
         get_mac_list();
@@ -219,7 +137,7 @@ $(function () {
      */
     var controller_view = (function () {
         //拥有id为以下dom元素,只能显示一个(它们为每个子页面div的id)
-        var views_id = ['main_view', 'ss_setup', 'ss_domain_list', 'ss_mac_list'];
+        var views_id = ['main_view', 'ss_setup_node', 'ss_setup_domain', 'ss_setup_mac'];
         var controller_view = {
             setViewShow: function (id) {
                 if (!id) {
@@ -256,9 +174,6 @@ $(function () {
                 controller_view.setViewShow(current_hash);
                 HiWiFi.initViewHeight();
                 $("#main_view").children("div").css("visibility", "visible");
-                // setTimeout(function () {
-                //     _self.doActionByViewId(current_hash);
-                // }, 2000);
             },
             //折叠/展开 高级设置页面
             showAdvancedView: function (view_element, bt_element, is_show) {
@@ -279,27 +194,6 @@ $(function () {
             },
         };
 
-        //绑定页面处理函数
-        //被绑定的页面处理函数只能通过更新dataStore中的数据对象来触发函数的执行
-        HiWiFi.dataStore.bindControllerViewFunction({
-            showViewRightInfo: function () {
-                var system_info = HiWiFi.dataStore.getData("system_info");
-
-                var $days_num = $("#days_num");
-                var $lan_ip = $("#lan_ip");
-                var $view_right = $(".J_view_right");
-                var os_uptime = system_info.os_uptime || 1;
-
-                $days_num.html(os_uptime + "<span>" + HiWiFi.i18n.prop("g_day") + "</span>");
-                if (system_info.lan_ip) {
-                    $lan_ip.children(':last').html(HiWiFi.i18n.prop("web_lan_ip") + "：" + system_info.lan_ip);
-                }
-                //显示并隐藏loding
-                $view_right.css("visibility", "visible");
-                //初始化高度
-                HiWiFi.initViewHeight();
-            }
-        });
         return controller_view;
     })();
     /*
@@ -332,7 +226,7 @@ $(function () {
         controller_view.setViewShow(id);
     });
 
-    //SS 高级设置
+    //SS设置页页[高级设置]按钮
     $("#ss_advanced_setup_bt").on("click", function () {
         controller_view.showAdvancedView($("#ss_advanced_table"), $(this));
     });
@@ -349,7 +243,7 @@ $(function () {
             'act':  'mylist_save',
             'list': $('#domain_list_value').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -371,7 +265,7 @@ $(function () {
             'act':  'myignore_save',
             'list': $('#domain_ignore_value').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -393,7 +287,7 @@ $(function () {
             'act':  'ignoremaclist_save',
             'list': $('#mac_list_value').val()
         };
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -410,7 +304,7 @@ $(function () {
             return;
         }
         $bt.addClass("disable");
-        var $form = $("#ss_setup form");
+        var $form = $("#ss_setup_node form");
         HiWiFi.formElementTrim($form, ["password", ""]);
         if (!$form.valid()) {
             $bt.removeClass("disable");
@@ -420,7 +314,7 @@ $(function () {
         var request_data = $form.serializeArray();
         request_data = HiWiFi.simplifyJSON(request_data);
         request_data['act'] = 'save';
-        $.post('easucks/ss', request_data, function(data){
+        $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
                 title: [HiWiFi.i18n.prop("g_set_success")],
@@ -436,7 +330,7 @@ $(function () {
         if ($bt.hasClass('disable')) {
             return;
         }
-        var $form = $("#ss_setup form");
+        var $form = $("#ss_setup_node form");
         if (!$form.valid()) {
             $bt.removeClass("disable");
             return;
@@ -445,8 +339,8 @@ $(function () {
         var ss_restart = function(){
             $bt.text('重启中...');
             var request_data = {'act': 'restart', 'ss_server_choice': $('#ss_server_nodes').val()};
-            $.post('easucks/ss', request_data, function(data){
-                getSSstatus(true);
+            $.post('easucks/ss_ajax', request_data, function(data){
+                get_ss_status(true);
                 HiWiFi.popDialog({
                     type: "G-text",
                     title: data['state'] ? '重启成功' : '出错了!',
@@ -456,12 +350,12 @@ $(function () {
             }, 'json');
         };
         //save first if form data has modified
-        if ($form.serialize() != SS['formdata']) {
+        if ($form.serialize() != g_data_ss['formdata']) {
             $bt.text(HiWiFi.i18n.prop("g_retaining"));
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
             request_data['act'] = 'save';
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 ss_restart();
             });
         }else{
@@ -475,7 +369,7 @@ $(function () {
         if ($bt.hasClass('disable')) {
             return;
         }
-        var $form = $("#ss_setup form");
+        var $form = $("#ss_setup_node form");
         if (!$form.valid()) {
             $bt.removeClass("disable");
             return;
@@ -484,8 +378,8 @@ $(function () {
         var ss_start = function(){
             $bt.text(HiWiFi.i18n.prop("g_startting"));
             var request_data = {'act': 'start', 'ss_server_choice': $('#ss_server_nodes').val()};
-            $.post('easucks/ss', request_data, function(data){
-                getSSstatus(true);
+            $.post('easucks/ss_ajax', request_data, function(data){
+                get_ss_status(true);
                 HiWiFi.popDialog({
                     type: "G-text",
                     title: data['state'] ? '启动成功' : '出错了!',
@@ -495,12 +389,12 @@ $(function () {
             }, 'json');
         };
         //save first if form data has modified
-        if ($form.serialize() != SS['formdata']) {
+        if ($form.serialize() != g_data_ss['formdata']) {
             $bt.text(HiWiFi.i18n.prop("g_retaining"));
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
             request_data['act'] = 'save';
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 ss_start();
             });
         }else{
@@ -517,8 +411,8 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
         var request_data = {'act': 'stop'};
-        $.post('easucks/ss', request_data, function(data){
-            getSSstatus(false);
+        $.post('easucks/ss_ajax', request_data, function(data){
+            get_ss_status(false);
             HiWiFi.popDialog({
                 type: "G-text",
                 title: data['state'] ? '停止成功' : '出错了!',
@@ -536,7 +430,7 @@ $(function () {
         }
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
-        getSSconfig($('#ss_server_nodes').val());
+        get_ss_config($('#ss_server_nodes').val());
         setTimeout(function(){$bt.removeClass("disable").text(HiWiFi.i18n.prop("g_refresh"));}, 3000);
     });
 
@@ -579,7 +473,7 @@ $(function () {
 
             $bt.prop('disabled', true);
 
-            $.post('easucks/ss', request_data, function(data){
+            $.post('easucks/ss_ajax', request_data, function(data){
                 if (data['ss_enabled'] == 'false') {
                     $bt.removeClass("on").addClass("off");
                 }else{
@@ -611,7 +505,7 @@ $(function () {
     }, "请输入正确的域名或IP地址");
 
     //自定义SS表单验证
-    $("#ss_setup form").validate({
+    $("#ss_setup_node form").validate({
         errorElement: 'p',
         errorClass: 'error',
         ignore: "",
@@ -644,12 +538,12 @@ $(function () {
     //SS服务器别名修改时，修改结果实时反馈到服务器选择列表中
     $('#ss_server_name').on('keyup', function(){
         var _this = this;
-        $("#ss_setup form").valid();
+        $("#ss_setup_node form").valid();
         $('#ss_server_nodes option:selected').text($(_this).val());
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
         $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-            getSSconfig($(this).parent('li').data('value'));
+            get_ss_config($(this).parent('li').data('value'));
         });
     });
 
@@ -671,7 +565,7 @@ $(function () {
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
         $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-            getSSconfig($(this).parent('li').data('value'));
+            get_ss_config($(this).parent('li').data('value'));
         });
     });
 
@@ -681,8 +575,8 @@ $(function () {
             'act': 'delete',
             'ss_server_choice': $('#ss_server_nodes').val()
         };
-        $.post('easucks/ss', request_data, function(data){
-            getSSconfig();
+        $.post('easucks/ss_ajax', request_data, function(data){
+            get_ss_config();
             HiWiFi.popDialog({
                 type: "G-text",
                 title: data['state'] ? '删除成功' : '出错了!',

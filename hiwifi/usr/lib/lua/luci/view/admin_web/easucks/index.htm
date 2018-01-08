@@ -6,31 +6,21 @@
 ]]--
 local version  = "1.4.5"
 local i18n = require "luci.i18n"
-include('admin_web/header') %>
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/net.css?v=<%=version%>">
-<link rel="stylesheet" type="text/css" href="<%=resource%>/v2/style/admin_web/net.css?v=<%=version%>">
+include('admin_web/header')
+
+-- 极路由官方固件1.4.5版变动了css文件所在目录
+local css_location = luci.sys.exec("if [ -f resource..'/v2/style/net.css' ]; then echo -n true; else echo -n false; fi")
+if css_location == true then
+    css_location = resource..'/v2/style/net.css';
+else
+    css_location = resource..'/v2/style/admin_web/net.css';
+end
+%>
+<link rel="stylesheet" type="text/css" href="<%=css_location..'?v='..version%>">
 <div id="bd">
     <div class="com-main clearfix">
         <div id="right_part" class="G-rightSide">
             <div>
-                <h2 class="J_view_right" style="visibility: hidden;"><%=i18n.translate("web_router_run_stable")%></h2>
-                <div class="side-bd">
-                    <div class="side-panel online-info J_view_right" style="visibility: hidden;">
-                        <p class="time" id="days_num"><span></span></p>
-                        <div class="ctr-list">
-                            <ul>
-                                <li>
-                                    <a href="javascript:;" class="icon icon2"  id="lan_ip"><span class="G-handle"></span></a>
-                                </li>
-                                <%if i18n.is_empty("query_warranty_visible") then%>
-                                <li>
-                                    <a href="<%=luci.dispatcher.build_url('admin_web','passport','guarantee')%>" target="_blank" class="icon icon3"><span><%=i18n.translate("web_query_warranty")%></span></a>
-                                </li>
-                                <%end%>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
                 <div class="G-power-panel">
                     <a href="javascript:;" class="icon power G-handle J_system_restart" style="display:none;"></a>
                     <p class="J_system_restart G-handle" style="display:none;"><%=i18n.translate("g_reboot")%></p>
@@ -45,7 +35,7 @@ include('admin_web/header') %>
             <div id="main_view" style="display: none;">
                 <div class="G-main-panel" style="visibility: hidden;">
                     <div class="G-gray-panel">
-                        <div class="G-main-panel-hd">SS状态</div>
+                        <div class="G-main-panel-hd">当前SS状态</div>
                         <div class="G-main-panel-bd">
                             <div class="net-status" id="ss_stauts_area">
                                 <div class="G-panel-loading"></div>
@@ -56,7 +46,7 @@ include('admin_web/header') %>
                                     <tr>
                                         <td id="current_way">当前节点</td>
                                         <td id="ss_status"><span class="icon icon-x"></span><span></span></td>
-                                        <td><a href="javascript:;" class="btn-normal" id="ss_setup_bt"><%=i18n.translate("g_set")%></a> </td>
+                                        <td><a href="javascript:;" class="btn-normal" id="ss_setup_node_bt"><%=i18n.translate("g_set")%></a> </td>
                                     </tr>
                                 </table>
                             </div>
@@ -67,230 +57,26 @@ include('admin_web/header') %>
                     <div class="G-main-panel-hd"><span class="icon setting"></span><span><%=i18n.translate('web_advanced_set')%></span></div>
                     <div class="G-main-panel-bd G-btn-list setting-list">
                         <ul>
-                            <li><a href="javascript:;" id="ss_domain_list_bt">域名列表管理</a></li>
-                            <li><a href="javascript:;" id="ss_mac_list_bt">设备黑名单管理</a></li>
+                            <li><a href="javascript:;" id="ss_setup_domain_bt">域名列表管理</a></li>
+                            <li><a href="javascript:;" id="ss_setup_mac_bt">设备黑名单管理</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div id="ss_setup" style="display: none;">
-                <form>
-                    <input type="hidden" required="required" id="ss_local_port" name="ss_local_port" value="61717">
-                    <div class="G-form-main">
-                        <div class="G-form-main-hd">
-                            <span class="G-handle right go_back">
-                                <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
-                            </span>
-                            <span class="icon setting"></span><span>自定义SS</span>
-                        </div>
-                        <div class="G-form-main-bd">
-                            <div class="ss-panel">
-                                <table class="G-form-table">
-                                    <col width="160"/>
-                                    <col width="340"/>
-                                    <tr>
-                                        <th>服务器选择</th>
-                                        <td>
-                                            <select id="ss_server_nodes" name="ss_server_choice" class="J_selectOriginal"></select>
-                                            <a href="javascript:;" class="text-btn" id="ss_create">新增</a>
-                                            <a href="javascript:;" class="text-btn" id="ss_delete"><%=i18n.translate("web_delete")%></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>服务器别名</th>
-                                        <td><input type="text" class="input" required="required" id="ss_server_name" name="ss_server_name" tabindex="1"></td>
-                                    </tr>
-                                    <tr>
-                                        <th><%=i18n.translate("web_server_address")%></th>
-                                        <td><input type="text" class="input" required="required" id="ss_server_ipad" name="ss_server_ipad" tabindex="2"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>服务器端口</th>
-                                        <td><input type="text" class="input" required="required" id="ss_server_port" name="ss_server_port" tabindex="3"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>通讯<%=i18n.translate("g_password")%></th>
-                                        <td>
-                                            <div class="G-password-bar">
-                                                <a href="javascript:;" class="password-handle J_password_icon G-password-off"></a>
-                                                <input type="text" name="" class="input" style="display: none;">
-                                                <input type="password" id="ss_server_pass" name="ss_server_pass" class="input" tabindex="4">
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>加密算法</th>
-                                        <td>
-                                            <select id="ss_server_meth" name="ss_server_meth" required="required" class="J_selectOriginal">
-                                                <option value="">请选择</option>
-                                                <option value="table">table</option>
-                                                <option value="rc4">rc4</option>
-                                                <option value="rc4-md5">rc4-md5</option>
-                                                <option value="aes-128-cfb">aes-128-cfb</option>
-                                                <option value="aes-192-cfb">aes-192-cfb</option>
-                                                <option value="aes-256-cfb">aes-256-cfb</option>
-                                                <option value="bf-cfb">bf-cfb</option>
-                                                <option value="camellia-128-cfb">camellia-128-cfb</option>
-                                                <option value="camellia-192-cfb">camellia-192-cfb</option>
-                                                <option value="camellia-256-cfb">camellia-256-cfb</option>
-                                                <option value="cast5-cfb">cast5-cfb</option>
-                                                <option value="des-cfb">des-cfb</option>
-                                                <option value="idea-cfb">idea-cfb</option>
-                                                <option value="rc2-cfb">rc2-cfb</option>
-                                                <option value="seed-cfb">seed-cfb</option>
-                                                <option value="salsa20">salsa20</option>
-                                                <option value="chacha20">chacha20</option>
-                                                <option value="chacha20-ietf">chacha20-ietf</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th><%=i18n.translate("web_run_mode")%></th>
-                                        <td>
-                                            <select id="ss_runnin_mode" name="ss_runnin_mode" required="required" class="J_selectOriginal">
-                                                <option value="">请选择</option>
-                                                <option value="gfwlist">域名列表模式</option>
-                                                <option value="game">游戏模式(所有TCP端口)</option>
-                                                <option value="web">网页模式(仅TCP80和443端口)</option>
-                                                <option value="all">全局模式(不区分国内外IP)</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th id="ss_running_state"><%=i18n.translate("web_running_state")%></th>
-                                        <td class="text-td">
-                                            <span id="ss_status_info"><%=i18n.translate("g_not_start")%></span>
-                                            <a href="javascript:;" class="text-btn" id="ss_start"><%=i18n.translate("g_start")%></a>
-                                            <a href="javascript:;" class="text-btn" id="ss_restart" style="display: none;">重启</a>
-                                            <a href="javascript:;" class="text-btn" id="ss_stop" style="display: none;"><%=i18n.translate("g_stop")%></a>
-                                            <a href="javascript:;" class="text-btn" id="ss_refresh"><%=i18n.translate("g_refresh")%></a>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <div class="super-set-bar G-handle" id="ss_advanced_setup_bt">
-                                    <span><%=i18n.translate("web_advanced_set")%></span><span class="icon icon16"></span>
-                                </div>
-                                <table class="G-form-table" id="ss_advanced_table" style="display: none;">
-                                    <col width="160"/>
-                                    <col width="340"/>
-                                    <tr>
-                                        <th><%=i18n.translate("web_boot")%></th>
-                                        <td style="padding-top:10px;">
-                                            <a href="javascript:;" class="G-switch-btn off btn" id="ss_auto_start"><span></span></a>
-                                        </td>
-                                    </tr>
-                                    <tr style="display: none;">
-                                        <th>fastopen</th>
-                                        <td style="padding-top:10px;">
-                                            <input type="hidden" name="ss_server_fsop" value="false" />
-                                            <a href="javascript:;" class="G-switch-btn off" id="ss_server_fsop"><span></span></a>
-                                            <span class="icon icon22 J_Tip G-handle" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-left: 5px;"></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>远程DNS</th>
-                                        <td>
-                                            <select id="ss_remote_dnss" name="ss_remote_dnss" required="required" class="J_selectOriginal">
-                                                <option value="">请选择</option>
-                                                <option value="8.8.4.4" selected>谷歌(8.8.4.4)</option>
-                                                <option value="60.32.112.42">日本(60.32.112.42)</option>
-                                                <option value="168.95.1.1">台湾(168.95.1.1)</option>
-                                                <option value="218.102.23.228">香港(218.102.23.228)</option>
-                                                <option value="168.126.63.1">韩国168.126.63.1)</option>
-                                                <option value="208.67.222.222">OpenDNS-1(208.67.222.222)</option>
-                                                <option value="208.67.220.220">OpenDNS-2(208.67.220.220)</option>
-                                                <option value="128.199.248.105">新加坡(128.199.248.105)</option>
-                                                <option value="74.82.42.42">HE.NET(74.82.42.42)</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="panel-btn-bar">
-                                <a href="javascript:;" class="btn" id="submit_ss"><%=i18n.translate("g_save")%></a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div id="ss_domain_list" style="display: none;">
-                <div class="G-form-main">
-                    <div class="G-form-main-hd">
-                        <span class="G-handle right go_back">
-                            <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
-                        </span>
-                        <span class="icon setting"></span><span>域名列表管理</span>
-                    </div>
-                    <div class="G-form-main-bd">
-                        <div class="ss-panel">
-                            <table style="width: auto; margin: auto">
-                                <tr>
-                                    <td colspan="2" style="padding-left:15px;">
-                                        <p>强制走代理的域名&nbsp;<a href="easucks/ss?act=gfwlist" target="_blank">查看内置列表</a></p>
-                                        <textarea id="domain_list_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
-                                        <p>这个列表里的域名会强制查询SS设置的远程DNS</p>
-                                        <p>一行一个域名，只写根域名就可以包括所有子域名</p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="panel-btn-bar">
-                            <a href="javascript:;" class="btn" id="submit_domain_list"><%=i18n.translate("g_save")%></a>
-                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
-                        </div>
-                    </div>
-                    <div class="G-form-main-bd">
-                        <div class="ss-panel">
-                            <table style="width: auto; margin: auto">
-                                <tr>
-                                    <td colspan="2" style="padding-left:15px;">
-                                        <p>强制不走代理的域名列表</p>
-                                        <textarea id="domain_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
-                                        <p>这个列表里的域名会强制查询本地DNS而不是SS设置的远程DNS</p>
-                                        <p>网速测试、游戏下载之类的域名应该添加到这个列表中</p>
-                                        <p>这样便可以启用更高速的CDN服务器进行下载或测速</p>
-                                        <p>如果与强制走代理的域名冲突或有包含关系，则优先不走代理</p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="panel-btn-bar">
-                            <a href="javascript:;" class="btn" id="submit_domain_ignore"><%=i18n.translate("g_save")%></a>
-                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="ss_mac_list" style="display: none;">
-                <div class="G-form-main">
-                    <div class="G-form-main-hd">
-                        <span class="G-handle right go_back">
-                            <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
-                        </span>
-                        <span class="icon setting"></span><span>设备黑名单管理</span>
-                    </div>
-                    <div class="G-form-main-bd">
-                        <div class="ss-panel">
-                            <table id="mac_list_table" style="width: auto; margin: auto">
-                                <tr>
-                                    <td colspan="2" style="padding-left:15px;">
-                                        <p class="td-tit">不走代理的设备列表</p>
-                                        <textarea id="mac_list_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
-                                        <p class="info">不希望某个设备走代理，可在此填写该设备MAC地址(格式为00:11:22:AA:BB:CC)<br>保存后还需要重启SS才生效</p>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="panel-btn-bar">
-                            <a href="javascript:;" class="btn" id="submit_mac_list"><%=i18n.translate("g_save")%></a>
-                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            <!-- SS设置部分 -->
+            <% include('admin_web/easucks/ss_setup_node') %>
+
+            <!-- SS域名部分 -->
+            <% include('admin_web/easucks/ss_setup_domain') %>
+
+            <!-- SS MAC部分 -->
+            <% include('admin_web/easucks/ss_setup_mac') %>
+
         </div>
     </div>
-<div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
+    <div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
+</div>
 <% include('admin_web/footer') %>
 <!-- 通用模块的专属js -->
 <script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?v=<%=version%>"></script>
