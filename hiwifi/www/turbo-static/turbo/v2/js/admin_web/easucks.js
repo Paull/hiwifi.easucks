@@ -1,6 +1,6 @@
-var SS = {};
 $(function () {
     "use strict";
+	var g_data_ss = {};
     /*
      *******************************Interfaces*******************************
      */
@@ -11,8 +11,8 @@ $(function () {
             'ss_server_choice': choice ? choice : ''
         };
         $.post('easucks/ss_ajax', request_data, function(data){
-            SS['config'] = data;
-            if(! $.isEmptyObject(SS['config'])){
+            g_data_ss['config'] = data;
+            if(! $.isEmptyObject(g_data_ss['config'])){
                 var i;
                 // 填充各项表单
                 $('#ss_server_nodes').empty();
@@ -52,10 +52,10 @@ $(function () {
     //获取SS运行信息
     function get_ss_status(formdata_refresh) {
         $.post('easucks/ss_ajax', {'act': 'status'}, function(data){
-            SS['status'] = data;
+            g_data_ss['status'] = data;
             //暂存表单内容，供稍后对比是否有改动时参考
             if (formdata_refresh)
-                SS['formdata'] = $("#ss_setup form").serialize();
+                g_data_ss['formdata'] = $("#ss_setup form").serialize();
 
             if(data.ss_enabled == 'true'){
                 $('#ss_auto_start').removeClass('off').addClass('on');
@@ -71,8 +71,8 @@ $(function () {
                 $('.btn_ss_restart').show();
                 $('#ss_stop').show();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_connected"));
-                if(typeof(SS['config']) == 'object' && 'ss_runnin_mode' in SS['config'])
-                    $("#ss_status").children(':last').text($('#ss_status').children(':last').text() + '(' + $("#ss_runnin_mode option[value='"+SS['config']['ss_runnin_mode']+"']").text().replace(/\(.*\)/, "") + ')');
+                if(typeof(g_data_ss['config']) == 'object' && 'ss_runnin_mode' in g_data_ss['config'])
+                    $("#ss_status").children(':last').text($('#ss_status').children(':last').text() + '(' + $("#ss_runnin_mode option[value='"+g_data_ss['config']['ss_runnin_mode']+"']").text().replace(/\(.*\)/, "") + ')');
             }else{
                 $("#ss_status").children(':first').removeClass("icon-j").addClass("icon-x");
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_not_connected"));
@@ -83,7 +83,7 @@ $(function () {
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
             }
 
-            $("#current_way").text(SS['config']['ss_servers'][data['ss_choice']]);
+            $("#current_way").text(g_data_ss['config']['ss_servers'][data['ss_choice']]);
 
             //显示样式,去除loding
             $('#ss_stauts_area').children(':eq(0)').hide();
@@ -350,7 +350,7 @@ $(function () {
             }, 'json');
         };
         //save first if form data has modified
-        if ($form.serialize() != SS['formdata']) {
+        if ($form.serialize() != g_data_ss['formdata']) {
             $bt.text(HiWiFi.i18n.prop("g_retaining"));
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
@@ -389,7 +389,7 @@ $(function () {
             }, 'json');
         };
         //save first if form data has modified
-        if ($form.serialize() != SS['formdata']) {
+        if ($form.serialize() != g_data_ss['formdata']) {
             $bt.text(HiWiFi.i18n.prop("g_retaining"));
             var request_data = $form.serializeArray();
             request_data = HiWiFi.simplifyJSON(request_data);
