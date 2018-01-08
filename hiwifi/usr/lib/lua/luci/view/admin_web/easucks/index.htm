@@ -8,6 +8,7 @@ local version  = "1.4.5"
 local i18n = require "luci.i18n"
 include('admin_web/header')
 
+-- 极路由官方固件1.4.5版变动了css文件所在目录
 local css_location = luci.sys.exec("if [ -f resource..'/v2/style/net.css' ]; then echo -n true; else echo -n false; fi")
 if css_location == true then
     css_location = resource..'/v2/style/net.css';
@@ -52,7 +53,7 @@ end
             <div id="main_view" style="display: none;">
                 <div class="G-main-panel" style="visibility: hidden;">
                     <div class="G-gray-panel">
-                        <div class="G-main-panel-hd">SS状态</div>
+                        <div class="G-main-panel-hd">当前SS状态</div>
                         <div class="G-main-panel-bd">
                             <div class="net-status" id="ss_stauts_area">
                                 <div class="G-panel-loading"></div>
@@ -92,7 +93,8 @@ end
 
         </div>
     </div>
-<div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
+    <div class="G-tip-pop J_ss_fsop_tip_text" style="width: 170px; height: 16px; display: none">ss-redir不支持该功能</div>
+</div>
 <% include('admin_web/footer') %>
 <!-- 通用模块的专属js -->
 <script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?v=<%=version%>"></script>

@@ -6,9 +6,6 @@ $(function () {
      */
     //初始化数据仓库store
     HiWiFi.dataStore({
-        client_info: {
-            mac: ""
-        },
         system_info: {
             os_uptime: 0,
             lan_ip: ""
@@ -64,23 +61,6 @@ $(function () {
             version: "v1"
         };
         return Openapi(muti_call).appendCall("network.lan.get_lan_status", null, request_configs, callback);
-    }
-
-    //获取ClientInfo
-    function getClientInfo() {
-        HiWiFi.getRouterInfoFromLastRequest(function (data) {
-            var client_info = {};
-            if (data && data.app_data) {
-                client_info = data.app_data || {};
-                HiWiFi.dataStore.updateData("client_info", {
-                    mac: HiWiFi.formatMacAddress(client_info.link_device_mac, true)
-                });
-            } else {
-                setTimeout(function () {
-                    getClientInfo();
-                }, 1000);
-            }
-        });
     }
 
     //获取SS配置信息
@@ -205,7 +185,6 @@ $(function () {
         muti_call = getSystemInfo(muti_call);
         muti_call = getLanStatus(muti_call);
         muti_call.send();
-        getClientInfo();
         getSSconfig();
         get_my_list();
         get_my_ignore();
