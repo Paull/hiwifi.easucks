@@ -1,6 +1,6 @@
 $(function () {
     "use strict";
-	var g_data_ss = {};
+    var g_data_ss = {};
     /*
      *******************************Interfaces*******************************
      */
@@ -55,7 +55,7 @@ $(function () {
             g_data_ss['status'] = data;
             //暂存表单内容，供稍后对比是否有改动时参考
             if (formdata_refresh)
-                g_data_ss['formdata'] = $("#ss_setup form").serialize();
+                g_data_ss['formdata'] = $("#ss_setup_node form").serialize();
 
             if(data.ss_enabled == 'true'){
                 $('#ss_auto_start').removeClass('off').addClass('on');
@@ -137,7 +137,7 @@ $(function () {
      */
     var controller_view = (function () {
         //拥有id为以下dom元素,只能显示一个(它们为每个子页面div的id)
-        var views_id = ['main_view', 'ss_setup', 'ss_domain_list', 'ss_mac_list'];
+        var views_id = ['main_view', 'ss_setup_node', 'ss_setup_domain', 'ss_setup_mac'];
         var controller_view = {
             setViewShow: function (id) {
                 if (!id) {
@@ -304,7 +304,7 @@ $(function () {
             return;
         }
         $bt.addClass("disable");
-        var $form = $("#ss_setup form");
+        var $form = $("#ss_setup_node form");
         HiWiFi.formElementTrim($form, ["password", ""]);
         if (!$form.valid()) {
             $bt.removeClass("disable");
@@ -330,7 +330,7 @@ $(function () {
         if ($bt.hasClass('disable')) {
             return;
         }
-        var $form = $("#ss_setup form");
+        var $form = $("#ss_setup_node form");
         if (!$form.valid()) {
             $bt.removeClass("disable");
             return;
@@ -369,7 +369,7 @@ $(function () {
         if ($bt.hasClass('disable')) {
             return;
         }
-        var $form = $("#ss_setup form");
+        var $form = $("#ss_setup_node form");
         if (!$form.valid()) {
             $bt.removeClass("disable");
             return;
@@ -505,7 +505,7 @@ $(function () {
     }, "请输入正确的域名或IP地址");
 
     //自定义SS表单验证
-    $("#ss_setup form").validate({
+    $("#ss_setup_node form").validate({
         errorElement: 'p',
         errorClass: 'error',
         ignore: "",
@@ -538,7 +538,7 @@ $(function () {
     //SS服务器别名修改时，修改结果实时反馈到服务器选择列表中
     $('#ss_server_name').on('keyup', function(){
         var _this = this;
-        $("#ss_setup form").valid();
+        $("#ss_setup_node form").valid();
         $('#ss_server_nodes option:selected').text($(_this).val());
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
