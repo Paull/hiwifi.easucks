@@ -2,69 +2,10 @@ var SS = {};
 $(function () {
     "use strict";
     /*
-     *******************************dataStore*******************************
-     */
-    //初始化数据仓库store
-    HiWiFi.dataStore({
-        system_info: {
-            os_uptime: 0,
-            lan_ip: ""
-        }
-    });
-
-    /*
      *******************************Interfaces*******************************
      */
-    //获取路由器系统状态
-    function getSystemInfo(muti_call) {
-        //构造 读取数据类型 接口callback的处理对象
-        var callback = HiWiFi.constructReadCallback(function (rsp, status, xhr) {
-            rsp = rsp || {};
-            xhr = xhr || {};
-            var data = rsp.data || {};
-            var uptime = data.uptime || 86400;
-            uptime = Math.ceil(uptime / 86400);
-            HiWiFi.dataStore.updateData("system_info", {
-                os_uptime: uptime
-            });
-
-        }, function (e) {
-            if (!muti_call) {
-                //独自调用时，failed后重试
-                HiWiFi.retry(getSystemInfo);
-            }
-        });
-
-        var request_configs = {
-            version: "v1"
-        };
-        return Openapi(muti_call).appendCall("wan.get_status", null, request_configs, callback);
-    }
-    //获取路由器lan端的状态
-    function getLanStatus(muti_call) {
-        //构造 读取数据类型 接口callback的处理对象
-        var callback = HiWiFi.constructReadCallback(function (rsp) {
-            rsp = rsp || {};
-            var data = rsp.data || {};
-            HiWiFi.dataStore.updateData("system_info", {
-                lan_ip: data.lan_ipv4 || ""
-            });
-
-        }, function (e) {
-            if (!muti_call) {
-                //独自调用时，failed后重试
-                HiWiFi.retry(getLanStatus);
-            }
-        });
-
-        var request_configs = {
-            version: "v1"
-        };
-        return Openapi(muti_call).appendCall("network.lan.get_lan_status", null, request_configs, callback);
-    }
-
     //获取SS配置信息
-    function getSSconfig(choice) {
+    function get_ss_config(choice) {
         var request_data = {
             'act': 'config',
             'ss_server_choice': choice ? choice : ''
@@ -101,15 +42,15 @@ $(function () {
                 HiWiFi.changeSelectToDiv();
                 //SS服务器列表点击事件
                 $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-                    getSSconfig($(this).parent('li').data('value'));
+                    get_ss_config($(this).parent('li').data('value'));
                 });
             }
-            getSSstatus(true);
+            get_ss_status(true);
         }, 'json');
     }
 
     //获取SS运行信息
-    function getSSstatus(formdata_refresh) {
+    function get_ss_status(formdata_refresh) {
         $.post('easucks/ss_ajax', {'act': 'status'}, function(data){
             SS['status'] = data;
             //暂存表单内容，供稍后对比是否有改动时参考
@@ -177,15 +118,13 @@ $(function () {
             alias: "initializationDatas"
         };
         //获取 读取数据类型 接口callback的公共的默认处理对象
-        var muti_call_callbacks = HiWiFi.constructReadCallback();
-        muti_call_callbacks.requestError = function () {
-            HiWiFi.retry(initializationDatas, arguments);
-        };
-        var muti_call = Openapi.mutiCall(request_configs, muti_call_callbacks);
-        muti_call = getSystemInfo(muti_call);
-        muti_call = getLanStatus(muti_call);
-        muti_call.send();
-        getSSconfig();
+        var muti_call_callbacks = HiWiFi.constructReadCallback(null, function () {
+            //初始化失败，需要重试
+            HiWiFi.retry(initializationDatas);
+        });
+        Openapi.cancelRequest(request_configs.alias);
+
+        get_ss_config();
         get_my_list();
         get_my_ignore();
         get_mac_list();
@@ -235,9 +174,6 @@ $(function () {
                 controller_view.setViewShow(current_hash);
                 HiWiFi.initViewHeight();
                 $("#main_view").children("div").css("visibility", "visible");
-                // setTimeout(function () {
-                //     _self.doActionByViewId(current_hash);
-                // }, 2000);
             },
             //折叠/展开 高级设置页面
             showAdvancedView: function (view_element, bt_element, is_show) {
@@ -258,27 +194,6 @@ $(function () {
             },
         };
 
-        //绑定页面处理函数
-        //被绑定的页面处理函数只能通过更新dataStore中的数据对象来触发函数的执行
-        HiWiFi.dataStore.bindControllerViewFunction({
-            showViewRightInfo: function () {
-                var system_info = HiWiFi.dataStore.getData("system_info");
-
-                var $days_num = $("#days_num");
-                var $lan_ip = $("#lan_ip");
-                var $view_right = $(".J_view_right");
-                var os_uptime = system_info.os_uptime || 1;
-
-                $days_num.html(os_uptime + "<span>" + HiWiFi.i18n.prop("g_day") + "</span>");
-                if (system_info.lan_ip) {
-                    $lan_ip.children(':last').html(HiWiFi.i18n.prop("web_lan_ip") + "：" + system_info.lan_ip);
-                }
-                //显示并隐藏loding
-                $view_right.css("visibility", "visible");
-                //初始化高度
-                HiWiFi.initViewHeight();
-            }
-        });
         return controller_view;
     })();
     /*
@@ -311,7 +226,7 @@ $(function () {
         controller_view.setViewShow(id);
     });
 
-    //SS 高级设置
+    //SS设置页页[高级设置]按钮
     $("#ss_advanced_setup_bt").on("click", function () {
         controller_view.showAdvancedView($("#ss_advanced_table"), $(this));
     });
@@ -425,7 +340,7 @@ $(function () {
             $bt.text('重启中...');
             var request_data = {'act': 'restart', 'ss_server_choice': $('#ss_server_nodes').val()};
             $.post('easucks/ss_ajax', request_data, function(data){
-                getSSstatus(true);
+                get_ss_status(true);
                 HiWiFi.popDialog({
                     type: "G-text",
                     title: data['state'] ? '重启成功' : '出错了!',
@@ -464,7 +379,7 @@ $(function () {
             $bt.text(HiWiFi.i18n.prop("g_startting"));
             var request_data = {'act': 'start', 'ss_server_choice': $('#ss_server_nodes').val()};
             $.post('easucks/ss_ajax', request_data, function(data){
-                getSSstatus(true);
+                get_ss_status(true);
                 HiWiFi.popDialog({
                     type: "G-text",
                     title: data['state'] ? '启动成功' : '出错了!',
@@ -497,7 +412,7 @@ $(function () {
         $bt.text(HiWiFi.i18n.prop("g_processing"));
         var request_data = {'act': 'stop'};
         $.post('easucks/ss_ajax', request_data, function(data){
-            getSSstatus(false);
+            get_ss_status(false);
             HiWiFi.popDialog({
                 type: "G-text",
                 title: data['state'] ? '停止成功' : '出错了!',
@@ -515,7 +430,7 @@ $(function () {
         }
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_processing"));
-        getSSconfig($('#ss_server_nodes').val());
+        get_ss_config($('#ss_server_nodes').val());
         setTimeout(function(){$bt.removeClass("disable").text(HiWiFi.i18n.prop("g_refresh"));}, 3000);
     });
 
@@ -628,7 +543,7 @@ $(function () {
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
         $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-            getSSconfig($(this).parent('li').data('value'));
+            get_ss_config($(this).parent('li').data('value'));
         });
     });
 
@@ -650,7 +565,7 @@ $(function () {
         HiWiFi.changeSelectToDiv();
         //SS服务器列表点击事件
         $('#ss_server_nodes').next('div.J_diySelectDiv').find('ul li a').on('click', function(){
-            getSSconfig($(this).parent('li').data('value'));
+            get_ss_config($(this).parent('li').data('value'));
         });
     });
 
@@ -661,7 +576,7 @@ $(function () {
             'ss_server_choice': $('#ss_server_nodes').val()
         };
         $.post('easucks/ss_ajax', request_data, function(data){
-            getSSconfig();
+            get_ss_config();
             HiWiFi.popDialog({
                 type: "G-text",
                 title: data['state'] ? '删除成功' : '出错了!',

@@ -21,24 +21,6 @@ end
     <div class="com-main clearfix">
         <div id="right_part" class="G-rightSide">
             <div>
-                <h2 class="J_view_right" style="visibility: hidden;"><%=i18n.translate("web_router_run_stable")%></h2>
-                <div class="side-bd">
-                    <div class="side-panel online-info J_view_right" style="visibility: hidden;">
-                        <p class="time" id="days_num"><span></span></p>
-                        <div class="ctr-list">
-                            <ul>
-                                <li>
-                                    <a href="javascript:;" class="icon icon2"  id="lan_ip"><span class="G-handle"></span></a>
-                                </li>
-                                <%if i18n.is_empty("query_warranty_visible") then%>
-                                <li>
-                                    <a href="<%=luci.dispatcher.build_url('admin_web','passport','guarantee')%>" target="_blank" class="icon icon3"><span><%=i18n.translate("web_query_warranty")%></span></a>
-                                </li>
-                                <%end%>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
                 <div class="G-power-panel">
                     <a href="javascript:;" class="icon power G-handle J_system_restart" style="display:none;"></a>
                     <p class="J_system_restart G-handle" style="display:none;"><%=i18n.translate("g_reboot")%></p>
