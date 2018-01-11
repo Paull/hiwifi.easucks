@@ -63,6 +63,7 @@ $(function () {
                 $('#ss_auto_start').removeClass('on').addClass('off');
             }
 
+            //SS运行状态
             if(data.ss_state == 'running'){
                 $("#ss_status").children(':first').removeClass("icon-x").addClass("icon-j");
                 $("#ss_status").children(':last').text(HiWiFi.i18n.prop("g_connected"));
@@ -81,6 +82,17 @@ $(function () {
                 $('.btn_ss_restart').hide();
                 $('#ss_stop').hide();
                 $('#ss_status_info').text(HiWiFi.i18n.prop("g_not_connected"));
+            }
+
+            //DNS运行状态
+            if(data.dns_53_state == 'running' && data.dns_54_state == 'running'){
+                $('#dns_status_info').text('运行正常');
+            }else{
+                var dns_status_info_text = '';
+                dns_status_info_text += data.dns_53_state == 'running' ? '端口53运行中' : '<strong class="error">端口53未运行</strong>';
+                dns_status_info_text += '，';
+                dns_status_info_text += data.dns_54_state == 'running' ? '端口54运行中' : '<strong class="error">端口54未运行</strong>';
+                $('#dns_status_info').html(dns_status_info_text);
             }
 
             $("#current_way").text(g_data_ss['config']['ss_servers'][data['ss_choice']]);
@@ -422,8 +434,8 @@ $(function () {
         }, 'json');
     });
 
-    //SS 刷新按钮
-    $("#ss_refresh").click(function (e) {
+    //SS,DNS运行状态后面的刷新按钮
+    $("#ss_refresh, #dns_refresh").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
             return;
