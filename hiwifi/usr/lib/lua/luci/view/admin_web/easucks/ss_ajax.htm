@@ -33,8 +33,10 @@ action = {
     ['status'] = function()
         local ss_state = luci.sys.exec('if [ "`ps | grep '..ss_binary_path..' | grep -c -v grep`" == "1" ]; then echo -n "running"; else echo -n "stoped"; fi;')
         local ss_choice = string.gsub(luci.sys.exec("uci -q get easucks.ss_server_choice"), '\n', '')
-        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true;else echo -n false;fi")
-        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'"}'
+        local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true; else echo -n false; fi")
+        local dns_53_state = luci.sys.exec('if [ $(ps|grep dnsmasq|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
+        local dns_54_state = luci.sys.exec('if [ $(ps|grep pdnsd|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
+        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'", "dns_53_state": "'..dns_53_state..'", "dns_54_state": "'..dns_54_state..'"}'
     end,
     -- 获取配置信息
     ['config'] = function()

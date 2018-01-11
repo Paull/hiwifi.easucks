@@ -114,12 +114,6 @@ local i18n = require "luci.i18n" %>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th><%=i18n.translate("web_boot")%></th>
-                                        <td style="padding-top:10px;">
-                                            <a href="javascript:;" class="G-switch-btn off btn" id="ss_auto_start"><span></span></a>
-                                        </td>
-                                    </tr>
-                                    <tr>
                                         <th>远程DNS</th>
                                         <td>
                                             <select id="ss_remote_dnss" name="ss_remote_dnss" required="required" class="J_selectOriginal">
@@ -134,6 +128,13 @@ local i18n = require "luci.i18n" %>
                                                 <option value="128.199.248.105">新加坡(128.199.248.105)</option>
                                                 <option value="74.82.42.42">HE.NET(74.82.42.42)</option>
                                             </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th id="dns_running_state">DNS运行状态</th>
+                                        <td class="text-td">
+                                            <span id="dns_status_info"><%=i18n.translate("g_not_start")%></span>
+                                            <a href="javascript:;" class="text-btn" id="dns_refresh"><%=i18n.translate("g_refresh")%></a>
                                         </td>
                                     </tr>
                                 </table>
