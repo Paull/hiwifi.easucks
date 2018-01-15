@@ -4,6 +4,10 @@
 /etc/easucks/ignore.mac
 /etc/easucks/my.list
 /etc/easucks/gfw.list
+/etc/easucks/ipsrc.force
+/etc/easucks/ipdst.force
+/etc/easucks/ipsrc.ignore
+/etc/easucks/ipdst.ignore
 /lib/upgrade/keep.d/easucks
 /usr/bin/ss-redir
 /usr/bin/pdnsd_init
@@ -12,6 +16,7 @@
 /usr/lib/lua/luci/view/admin_web/network/index.htm
 /usr/lib/lua/luci/view/admin_web/easucks/index.htm
 /usr/lib/lua/luci/view/admin_web/easucks/ss_ajax.htm
+/usr/lib/lua/luci/view/admin_web/easucks/ss_setup_ip.htm
 /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_mac.htm
 /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_node.htm
 /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_domain.htm
