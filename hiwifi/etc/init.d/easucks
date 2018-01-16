@@ -3,6 +3,7 @@ START=99
 STOP=99
 
 NAME=easucks
+CNAME=FIFA助手
 DESC="socks5 proxy redirector"
 DAEMON=/usr/bin/ss-redir
 PIDFILE=/var/run/$NAME.pid
@@ -10,6 +11,12 @@ TMPDIR=/tmp/$NAME
 SSCONFIG=$TMPDIR/ss.json
 PDNSDCONFIG=$TMPDIR/pdnsd.conf
 DNSMASQ_CONFIG_DIR=/tmp/dnsmasq.d
+
+luci_entry_button() {
+	if [ $(grep $NAME /usr/lib/lua/luci/view/admin_web/network/index.htm|wc -l) -lt 1 ]; then
+		sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'""$NAME""'"')%>">'"$CNAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
+	fi
+}
 
 ss_get_config() {
     lanip=$(uci get network.lan.ipaddr)
@@ -158,6 +165,7 @@ ss_iptables_del() {
 }
 
 ss_get_config
+luci_entry_button
 
 start() {
     insmod ipt_REDIRECT 2>/dev/null
