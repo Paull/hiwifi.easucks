@@ -106,21 +106,49 @@ $(function () {
     //获取强制走代理域名列表
     function get_my_list() {
         $.post('easucks/ss_ajax', {'act': 'mylist'}, function(data){
-            $('#domain_list_value').val(data);
+            $('#domain_list_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制不走代理域名列表
     function get_my_ignore() {
         $.post('easucks/ss_ajax', {'act': 'myignore'}, function(data){
-            $('#domain_ignore_value').val(data);
+            $('#domain_ignore_value').val(data).prop("disabled", false);
+        });
+    }
+
+    //获取强制走代理的局域网源IP列表
+    function get_ipsrc_force() {
+        $.post('easucks/ss_ajax', {'act': 'ipsrc_force'}, function(data){
+            $('#ipsrc_force_value').val(data).prop("disabled", false);
+        });
+    }
+
+    //获取强制走代理的互联网目的IP列表
+    function get_ipdst_force() {
+        $.post('easucks/ss_ajax', {'act': 'ipdst_force'}, function(data){
+            $('#ipdst_force_value').val(data).prop("disabled", false);
+        });
+    }
+
+    //获取强制不走代理的局域网源IP列表
+    function get_ipsrc_ignore() {
+        $.post('easucks/ss_ajax', {'act': 'ipsrc_ignore'}, function(data){
+            $('#ipsrc_ignore_value').val(data).prop("disabled", false);
+        });
+    }
+
+    //获取强制不走代理的互联网目的IP列表
+    function get_ipdst_ignore() {
+        $.post('easucks/ss_ajax', {'act': 'ipdst_ignore'}, function(data){
+            $('#ipdst_ignore_value').val(data).prop("disabled", false);
         });
     }
 
     //获取过滤设备列表
     function get_mac_list() {
         $.post('easucks/ss_ajax', {'act': 'ignoremaclist'}, function(data){
-            $('#mac_list_value').val(data);
+            $('#mac_list_value').val(data).prop("disabled", false);
         });
     }
 
@@ -139,6 +167,10 @@ $(function () {
         get_ss_config();
         get_my_list();
         get_my_ignore();
+        get_ipsrc_force();
+        get_ipdst_force();
+        get_ipsrc_ignore();
+        get_ipdst_ignore();
         get_mac_list();
     }
 
@@ -149,7 +181,7 @@ $(function () {
      */
     var controller_view = (function () {
         //拥有id为以下dom元素,只能显示一个(它们为每个子页面div的id)
-        var views_id = ['main_view', 'ss_setup_node', 'ss_setup_domain', 'ss_setup_mac'];
+        var views_id = ['main_view', 'ss_setup_node', 'ss_setup_domain', 'ss_setup_mac', 'ss_setup_ip'];
         var controller_view = {
             setViewShow: function (id) {
                 if (!id) {
@@ -258,14 +290,14 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: [HiWiFi.i18n.prop("g_set_success")],
+                title: '域名列表保存成功，并且已生效',
                 content: ""
-            }).time(1500);
+            }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
         }, 'json');
     });
 
-    //强制走代理域名列表 提交表单
+    //不强制走代理域名列表 提交表单
     $("#submit_domain_ignore").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
@@ -280,9 +312,97 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: [HiWiFi.i18n.prop("g_set_success")],
+                title: '域名列表保存成功，并且已生效',
                 content: ""
-            }).time(1500);
+            }).time(2500);
+            $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
+        }, 'json');
+    });
+
+    //强制走代理的局域网源IP列表 提交表单
+    $("#submit_ipsrc_force").click(function (e) {
+        var $bt = $(this);
+        if ($bt.hasClass('disable')) {
+            return;
+        }
+        $bt.addClass("disable");
+        $bt.text(HiWiFi.i18n.prop("g_retaining"));
+        var request_data = {
+            'act':  'ipsrc_force_save',
+            'list': $('#ipsrc_force_value').val()
+        };
+        $.post('easucks/ss_ajax', request_data, function(data){
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: 'IP列表保存成功，需手动重启SS后生效',
+                content: ""
+            }).time(2500);
+            $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
+        }, 'json');
+    });
+
+    //强制走代理的互联网目的IP列表 提交表单
+    $("#submit_ipdst_force").click(function (e) {
+        var $bt = $(this);
+        if ($bt.hasClass('disable')) {
+            return;
+        }
+        $bt.addClass("disable");
+        $bt.text(HiWiFi.i18n.prop("g_retaining"));
+        var request_data = {
+            'act':  'ipdst_force_save',
+            'list': $('#ipdst_force_value').val()
+        };
+        $.post('easucks/ss_ajax', request_data, function(data){
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: 'IP列表保存成功，需手动重启SS后生效',
+                content: ""
+            }).time(2500);
+            $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
+        }, 'json');
+    });
+
+    //强制不走代理的局域网源IP列表 提交表单
+    $("#submit_ipsrc_ignore").click(function (e) {
+        var $bt = $(this);
+        if ($bt.hasClass('disable')) {
+            return;
+        }
+        $bt.addClass("disable");
+        $bt.text(HiWiFi.i18n.prop("g_retaining"));
+        var request_data = {
+            'act':  'ipsrc_ignore_save',
+            'list': $('#ipsrc_ignore_value').val()
+        };
+        $.post('easucks/ss_ajax', request_data, function(data){
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: 'IP列表保存成功，需手动重启SS后生效',
+                content: ""
+            }).time(2500);
+            $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
+        }, 'json');
+    });
+
+    //强制不走代理的互联网目的IP列表 提交表单
+    $("#submit_ipdst_ignore").click(function (e) {
+        var $bt = $(this);
+        if ($bt.hasClass('disable')) {
+            return;
+        }
+        $bt.addClass("disable");
+        $bt.text(HiWiFi.i18n.prop("g_retaining"));
+        var request_data = {
+            'act':  'ipdst_ignore_save',
+            'list': $('#ipdst_ignore_value').val()
+        };
+        $.post('easucks/ss_ajax', request_data, function(data){
+            HiWiFi.popDialog({
+                type: "G-text",
+                title: 'IP列表保存成功，需手动重启SS后生效',
+                content: ""
+            }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
         }, 'json');
     });

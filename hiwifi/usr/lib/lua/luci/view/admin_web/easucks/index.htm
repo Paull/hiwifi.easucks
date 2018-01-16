@@ -54,7 +54,7 @@ end
                                     <tr>
                                         <td id="current_way">当前节点</td>
                                         <td id="ss_status"><span class="icon icon-x"></span><span></span></td>
-                                        <td><a href="javascript:;" class="btn-normal" id="ss_setup_node_bt"><%=i18n.translate("g_set")%></a> </td>
+                                        <td><a href="javascript:;" class="btn-normal" id="ss_setup_node_bt">节点设置</a> </td>
                                     </tr>
                                 </table>
                             </div>
@@ -66,17 +66,21 @@ end
                     <div class="G-main-panel-bd G-btn-list setting-list">
                         <ul>
                             <li><a href="javascript:;" id="ss_setup_domain_bt">域名列表管理</a></li>
+                            <li><a href="javascript:;" id="ss_setup_ip_bt">IP列表管理</a></li>
                             <li><a href="javascript:;" id="ss_setup_mac_bt">设备黑名单管理</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- SS设置部分 -->
+            <!-- SS节点部分 -->
             <% include('admin_web/easucks/ss_setup_node') %>
 
             <!-- SS域名部分 -->
             <% include('admin_web/easucks/ss_setup_domain') %>
+
+            <!-- SSIP部分 -->
+            <% include('admin_web/easucks/ss_setup_ip') %>
 
             <!-- SS MAC部分 -->
             <% include('admin_web/easucks/ss_setup_mac') %>

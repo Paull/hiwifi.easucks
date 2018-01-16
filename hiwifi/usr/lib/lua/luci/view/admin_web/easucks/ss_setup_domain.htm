@@ -18,8 +18,8 @@ local i18n = require "luci.i18n" %>
                             <table style="width: auto; margin: auto">
                                 <tr>
                                     <td colspan="2" style="padding-left:15px;">
-                                        <p>强制走代理的域名&nbsp;<a href="easucks/ss?act=gfwlist" target="_blank">查看内置列表</a></p>
-                                        <textarea id="domain_list_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
+                                        <p>强制走代理的域名&nbsp;<a href="easucks/ss_ajax?act=gfwlist" target="_blank">查看内置列表</a></p>
+                                        <textarea id="domain_list_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
                                         <p>这个列表里的域名会强制查询SS设置的远程DNS</p>
                                         <p>一行一个域名，只写根域名就可以包括所有子域名</p>
                                     </td>
@@ -28,7 +28,6 @@ local i18n = require "luci.i18n" %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_list"><%=i18n.translate("g_save")%></a>
-                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                     <div class="G-form-main-bd">
@@ -37,7 +36,7 @@ local i18n = require "luci.i18n" %>
                                 <tr>
                                     <td colspan="2" style="padding-left:15px;">
                                         <p>强制不走代理的域名列表</p>
-                                        <textarea id="domain_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;">Loading...</textarea>
+                                        <textarea id="domain_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
                                         <p>这个列表里的域名会强制查询本地DNS而不是SS设置的远程DNS</p>
                                         <p>网速测试、游戏下载之类的域名应该添加到这个列表中</p>
                                         <p>这样便可以启用更高速的CDN服务器进行下载或测速</p>
@@ -48,7 +47,6 @@ local i18n = require "luci.i18n" %>
                         </div>
                         <div class="panel-btn-bar">
                             <a href="javascript:;" class="btn" id="submit_domain_ignore"><%=i18n.translate("g_save")%></a>
-                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
                         </div>
                     </div>
                 </div>

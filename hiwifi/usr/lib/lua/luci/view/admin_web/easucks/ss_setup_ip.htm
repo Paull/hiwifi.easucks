@@ -1,0 +1,95 @@
+<%
+--[[
+    Info      FIFA助手插件域名页
+    Author    Paull  <paull@qq.com>
+    Copyright 2016
+]]--
+local i18n = require "luci.i18n" %>
+            <div id="ss_setup_ip" style="display: none;">
+                <div class="G-form-main">
+                    <div class="G-form-main-hd">
+                        <span class="G-handle right go_back">
+                            <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
+                        </span>
+                        <span class="icon setting"></span><span>IP列表管理</span>
+                    </div>
+                    <div class="G-form-main-bd">
+                        <div class="ss-panel">
+                            <table style="width: auto; margin: auto">
+                                <tr>
+                                    <td colspan="2" style="padding-left:15px;">
+                                        <p>强制走代理的局域网源IP</p>
+                                        <textarea id="ipsrc_force_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
+                                        <p>一行一个IP，可以是单个IP地址，也可以是IP地址/掩码长度形式</p>
+                                        <p>例：192.168.199.100，强制单个源IP走代理</p>
+                                        <p>例：192.168.199.0/25，强制局域网前半段IP走代理</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-btn-bar">
+                            <a href="javascript:;" class="btn" id="submit_ipsrc_force"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
+                        </div>
+                    </div>
+                    <div class="G-form-main-bd">
+                        <div class="ss-panel">
+                            <table style="width: auto; margin: auto">
+                                <tr>
+                                    <td colspan="2" style="padding-left:15px;">
+                                        <p>强制不走代理的局域网源IP列表</p>
+                                        <textarea id="ipsrc_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
+                                        <p>强制不走代理的优先级大于强制走代理</p>
+                                        <p>一行一个IP，可以是单个IP地址，也可以是IP地址/掩码长度形式</p>
+                                        <p>例：192.168.199.101，强制单个源IP不走代理</p>
+                                        <p>例：192.168.199.192/26，强制局域网后四分之一段IP不走代理</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-btn-bar">
+                            <a href="javascript:;" class="btn" id="submit_ipsrc_ignore"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
+                        </div>
+                    </div>
+                    <div class="G-form-main-bd">
+                        <div class="ss-panel">
+                            <table style="width: auto; margin: auto">
+                                <tr>
+                                    <td colspan="2" style="padding-left:15px;">
+                                        <p>强制走代理的互联网目的IP</p>
+                                        <textarea id="ipdst_force_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
+                                        <p>一行一个IP，可以是单个IP地址，也可以是IP地址/掩码长度形式</p>
+                                        <p>例：113.123.123.123，强制单个互联网目的IP走代理</p>
+                                        <p>例：52.0.0.0/8，强制52整个A段IP走代理</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-btn-bar">
+                            <a href="javascript:;" class="btn" id="submit_ipdst_force"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
+                        </div>
+                    </div>
+                    <div class="G-form-main-bd">
+                        <div class="ss-panel">
+                            <table style="width: auto; margin: auto">
+                                <tr>
+                                    <td colspan="2" style="padding-left:15px;">
+                                        <p>强制不走代理的互联网目的IP列表</p>
+                                        <textarea id="ipdst_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
+                                        <p>强制不走代理的优先级大于强制走代理</p>
+                                        <p>一行一个IP，可以是单个IP地址，也可以是IP地址/掩码长度形式</p>
+                                        <p>例：213.213.213.213，强制单个互联网目的IP走不代理</p>
+                                        <p>例：54.123.0.0/16，强制54.123整个B段IP不走代理</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-btn-bar">
+                            <a href="javascript:;" class="btn" id="submit_ipdst_ignore"><%=i18n.translate("g_save")%></a>
+                            <a href="javascript:;" class="btn btn_ss_restart" style="display: none;">重启</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
