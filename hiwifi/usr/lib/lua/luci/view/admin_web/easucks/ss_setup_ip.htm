@@ -2,7 +2,7 @@
 --[[
     Info      FIFA助手插件域名页
     Author    Paull  <paull@qq.com>
-    Copyright 2016
+    Copyright 2018
 ]]--
 local i18n = require "luci.i18n" %>
             <div id="ss_setup_ip" style="display: none;">
@@ -21,7 +21,7 @@ local i18n = require "luci.i18n" %>
                                         <p>强制走代理的局域网源IP</p>
                                         <textarea id="ipsrc_force_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
                                         <p>一行一个IP，可以是单个IP地址，也可以是IP地址/掩码长度形式</p>
-                                        <p>例：192.168.199.100，强制单个源IP走代理</p>
+                                        <p>例：192.168.199.100，强制单个局域网源IP走代理</p>
                                         <p>例：192.168.199.0/25，强制局域网前半段IP走代理</p>
                                     </td>
                                 </tr>
@@ -40,7 +40,7 @@ local i18n = require "luci.i18n" %>
                                         <textarea id="ipsrc_ignore_value" cols="30" rows="10" class="textarea" style="border: 1px #c7c7c7 solid; height: 34px; text-indent: 5px; color: #5a6779; outline: none; font-size: 14px; width: 450px; height: 100px; text-indent: 0;" disabled="disabled">Loading...</textarea>
                                         <p>强制不走代理的优先级大于强制走代理</p>
                                         <p>一行一个IP，可以是单个IP地址，也可以是IP地址/掩码长度形式</p>
-                                        <p>例：192.168.199.101，强制单个源IP不走代理</p>
+                                        <p>例：192.168.199.101，强制单个局域网源IP不走代理</p>
                                         <p>例：192.168.199.192/26，强制局域网后四分之一段IP不走代理</p>
                                     </td>
                                 </tr>

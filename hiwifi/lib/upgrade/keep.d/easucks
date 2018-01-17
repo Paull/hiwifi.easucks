@@ -1,13 +1,13 @@
 /etc/init.d/easucks
 /etc/rc.d/S99easucks
-/etc/easucks/ignore.list
-/etc/easucks/ignore.mac
-/etc/easucks/my.list
 /etc/easucks/gfw.list
+/etc/easucks/domain.ignore
+/etc/easucks/domian.force
 /etc/easucks/ipsrc.force
 /etc/easucks/ipdst.force
 /etc/easucks/ipsrc.ignore
 /etc/easucks/ipdst.ignore
+/etc/easucks/mac.ignore
 /lib/upgrade/keep.d/easucks
 /usr/bin/ss-redir
 /usr/bin/pdnsd_init
