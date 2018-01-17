@@ -104,15 +104,15 @@ $(function () {
     }
 
     //获取强制走代理域名列表
-    function get_my_list() {
-        $.post('easucks/ss_ajax', {'act': 'mylist'}, function(data){
-            $('#domain_list_value').val(data).prop("disabled", false);
+    function get_domain_force() {
+        $.post('easucks/ss_ajax', {'act': 'domain_force'}, function(data){
+            $('#domain_force_value').val(data).prop("disabled", false);
         });
     }
 
     //获取强制不走代理域名列表
-    function get_my_ignore() {
-        $.post('easucks/ss_ajax', {'act': 'myignore'}, function(data){
+    function get_domain_ignore() {
+        $.post('easucks/ss_ajax', {'act': 'domain_ignore'}, function(data){
             $('#domain_ignore_value').val(data).prop("disabled", false);
         });
     }
@@ -165,13 +165,13 @@ $(function () {
         Openapi.cancelRequest(request_configs.alias);
 
         get_ss_config();
-        get_my_list();
-        get_my_ignore();
+        get_mac_ignore();
         get_ipsrc_force();
         get_ipdst_force();
         get_ipsrc_ignore();
         get_ipdst_ignore();
-        get_mac_ignore();
+        get_domain_force();
+        get_domain_ignore();
     }
 
     /*
@@ -276,7 +276,7 @@ $(function () {
     });
  
     //强制走代理域名列表 提交表单
-    $("#submit_domain_list").click(function (e) {
+    $("#submit_domain_force").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
             return;
@@ -284,13 +284,13 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_retaining"));
         var request_data = {
-            'act':  'mylist_save',
-            'list': $('#domain_list_value').val()
+            'act':  'domain_force_save',
+            'list': $('#domain_force_value').val()
         };
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: '域名列表保存成功，并且已生效',
+                title: '域名列表保存成功，并且已生效，无需重启',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
@@ -306,13 +306,13 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_retaining"));
         var request_data = {
-            'act':  'myignore_save',
+            'act':  'domain_ignore_save',
             'list': $('#domain_ignore_value').val()
         };
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: '域名列表保存成功，并且已生效',
+                title: '域名列表保存成功，并且已生效，无需重启',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
