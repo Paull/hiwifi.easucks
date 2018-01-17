@@ -422,7 +422,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: 'MAC列表保存成功，重启SS后生效,
+                title: 'MAC列表保存成功，重启SS后生效'
                 content: ""
             }).time(1500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
