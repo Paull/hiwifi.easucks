@@ -168,38 +168,42 @@ action = {
     end,
     -- 保存强制走代理的局域网源IP列表
     ['ipsrc_force_save'] = function()
-        local target_file = ipsrc_force
         local file = io.open("/tmp/tmplist", "w")
         file:write(luci.http.formvalue('list'))
         file:close()
-        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..target_file)
+        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..ipsrc_force)
+        luci.sys.exec("ipset flush ipsrc_force_list")
+        luci.sys.exec("cat "..ipsrc_force.." | awk '{print \"ipset add -q ipsrc_force_list \"$0}'|sh")
         json = '{"state": 1}'
     end,
     -- 保存强制走代理的互联网目的IP列表
     ['ipdst_force_save'] = function()
-        local target_file = ipdst_force
         local file = io.open("/tmp/tmplist", "w")
         file:write(luci.http.formvalue('list'))
         file:close()
-        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..target_file)
+        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..ipdst_force)
+        luci.sys.exec("ipset flush ipdst_force_list")
+        luci.sys.exec("cat "..ipdst_force.." | awk '{print \"ipset add -q ipdst_force_list \"$0}'|sh")
         json = '{"state": 1}'
     end,
     -- 保存强制不走代理的局域网源IP列表
     ['ipsrc_ignore_save'] = function()
-        local target_file = ipsrc_ignore
         local file = io.open("/tmp/tmplist", "w")
         file:write(luci.http.formvalue('list'))
         file:close()
-        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..target_file)
+        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..ipsrc_ignore)
+        luci.sys.exec("ipset flush ipsrc_ignore_list")
+        luci.sys.exec("cat "..ipsrc_ignore.." | awk '{print \"ipset add -q ipsrc_ignore_list \"$0}'|sh")
         json = '{"state": 1}'
     end,
     -- 保存强制不走代理的互联网目的IP列表
     ['ipdst_ignore_save'] = function()
-        local target_file = ipdst_ignore
         local file = io.open("/tmp/tmplist", "w")
         file:write(luci.http.formvalue('list'))
         file:close()
-        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..target_file)
+        luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..ipdst_ignore)
+        luci.sys.exec("ipset flush ipdst_ignore_list")
+        luci.sys.exec("cat "..ipdst_ignore.." | awk '{print \"ipset add -q ipdst_ignore_list \"$0}'|sh")
         json = '{"state": 1}'
     end,
     -- 读取mac过滤列表

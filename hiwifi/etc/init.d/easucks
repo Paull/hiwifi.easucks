@@ -14,7 +14,7 @@ DNSMASQ_CONFIG_DIR=/tmp/dnsmasq.d
 
 luci_entry_button() {
 	if [ $(grep $NAME /usr/lib/lua/luci/view/admin_web/network/index.htm|wc -l) -lt 1 ]; then
-		sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'""$NAME""'"')%>">'"$CNAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
+		sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'$NAME'"')%>">'"$CNAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
 	fi
 }
 
@@ -100,6 +100,27 @@ ss_iptables_add() {
     iptables -t nat -A $NAME-PREROUTING -d $ss_server_ipad/32 -j RETURN
     iptables -t nat -A $NAME-OUTPUT -d $ss_server_ipad/32 -j RETURN
     iptables -t nat -A $NAME-OUTPUT -d $ss_remote_dnss -p tcp --dport 53 -j DNAT --to-destination $lanip:$ss_local_port
+
+	[ $(ipset list ipsrc_force_list 2>/dev/null| wc -l) -eq 0 ] && { ipset -N ipsrc_force_list nethash; }
+	[ $(ipset list ipdst_force_list 2>/dev/null| wc -l) -eq 0 ] && { ipset -N ipdst_force_list nethash; }
+	[ $(ipset list ipsrc_ignore_list 2>/dev/null| wc -l) -eq 0 ] && { ipset -N ipsrc_ignore_list nethash; }
+	[ $(ipset list ipdst_ignore_list 2>/dev/null| wc -l) -eq 0 ] && { ipset -N ipdst_ignore_list nethash; }
+	ipset flush ipsrc_force_list
+	ipset flush ipdst_force_list
+	ipset flush ipsrc_ignore_list
+	ipset flush ipdst_ignore_list
+	cat /etc/$NAME/ipsrc.force | awk '{print "ipset add -q ipsrc_force_list "$0}'|sh
+	cat /etc/$NAME/ipdst.force | awk '{print "ipset add -q ipdst_force_list "$0}'|sh
+	cat /etc/$NAME/ipsrc.ignore | awk '{print "ipset add -q ipsrc_ignore_list "$0}'|sh
+	cat /etc/$NAME/ipdst.ignore | awk '{print "ipset add -q ipdst_ignore_list "$0}'|sh
+	iptables -t nat -A $NAME-PREROUTING -m set --match-set ipsrc_ignore_list src -j RETURN
+	iptables -t nat -A $NAME-PREROUTING -m set --match-set ipdst_ignore_list dst -j RETURN
+	iptables -t nat -A $NAME-PREROUTING -p tcp -m set --match-set ipsrc_force_list src -j REDIRECT --to-ports $ss_local_port
+	iptables -t nat -A $NAME-PREROUTING -p tcp -m set --match-set ipdst_force_list dst -j REDIRECT --to-ports $ss_local_port
+	iptables -t nat -A $NAME-OUTPUT -m set --match-set ipsrc_ignore_list src -j RETURN
+	iptables -t nat -A $NAME-OUTPUT -m set --match-set ipdst_ignore_list dst -j RETURN
+	iptables -t nat -A $NAME-OUTPUT -p tcp -m set --match-set ipsrc_force_list src -j DNAT --to-destination $lanip:$ss_local_port
+	iptables -t nat -A $NAME-OUTPUT -p tcp -m set --match-set ipdst_force_list dst -j DNAT --to-destination $lanip:$ss_local_port
 
     case $ss_runnin_mode in
         gfwlist)
