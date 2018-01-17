@@ -64,7 +64,7 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
 - 1.4.5c
   - 增加DNS运行状态显示
 - 1.4.5d
-  - 增加DNS运行状态显示
+  - 新增自定义IP列表功能，可强制某IP走代理或强制不走代理
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
