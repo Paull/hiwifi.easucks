@@ -37,16 +37,15 @@
   - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
   
 ## 升级方法
-- 重新安装既可，不会覆盖配置数据
-- 因为已经root过，仅需执行安装步骤中的第四步
+- 进ssh再执行一次curl easucks.cn|sh既可
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
 - 或者进入极路由的ssh，执行卸载命令：
 ```
 cat /lib/upgrade/keep.d/easucks|xargs rm
-mv /usr/lib/lua/luci/view/admin_web/home.backup /usr/lib/lua/luci/view/admin_web/home.htm
-mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/admin_web/network/index.htm
+sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/home.htm
+sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
 ```
 
 ## 更新历史：
@@ -64,6 +63,8 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
   - 修复上个版本修改引起的启动、重启逻辑错误
 - 1.4.5c
   - 增加DNS运行状态显示
+- 1.4.5d
+  - 增加DNS运行状态显示
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
@@ -74,6 +75,7 @@ mv /usr/lib/lua/luci/view/admin_web/network/index.backup /usr/lib/lua/luci/view/
 - [x] 保存SS列表时支持中文别名
 - [x] 服务器地址支持保存域名，启动时自动判断是域名则解析成IP后再启动
 - [x] 显示DNS运行状态
+- [x] 新增自定义IP列表功能，可强制某IP走代理或强制不走代理
 - [ ] 测速功能
 - [ ] 提供离线安装包
 - [ ] 尝试Cross Compile，提供大于3.0的ss版本

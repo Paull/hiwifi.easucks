@@ -12,8 +12,6 @@
 /usr/bin/ss-redir
 /usr/bin/pdnsd_init
 /usr/sbin/pdnsd
-/usr/lib/lua/luci/view/admin_web/home.htm
-/usr/lib/lua/luci/view/admin_web/network/index.htm
 /usr/lib/lua/luci/view/admin_web/easucks/index.htm
 /usr/lib/lua/luci/view/admin_web/easucks/ss_ajax.htm
 /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_ip.htm

@@ -334,7 +334,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: 'IP列表保存成功，需手动重启SS后生效',
+                title: 'IP列表保存成功，并且已生效，无需重启',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
@@ -356,7 +356,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: 'IP列表保存成功，需手动重启SS后生效',
+                title: 'IP列表保存成功，并且已生效，无需重启',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
@@ -378,7 +378,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: 'IP列表保存成功，需手动重启SS后生效',
+                title: 'IP列表保存成功，并且已生效，无需重启',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
@@ -400,7 +400,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: 'IP列表保存成功，需手动重启SS后生效',
+                title: 'IP列表保存成功，并且已生效，无需重启',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
@@ -422,7 +422,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: [HiWiFi.i18n.prop("g_set_success")],
+                title: 'MAC列表保存成功，重启SS后生效'
                 content: ""
             }).time(1500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
