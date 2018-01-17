@@ -146,9 +146,9 @@ $(function () {
     }
 
     //获取过滤设备列表
-    function get_mac_list() {
-        $.post('easucks/ss_ajax', {'act': 'ignoremaclist'}, function(data){
-            $('#mac_list_value').val(data).prop("disabled", false);
+    function get_mac_ignore() {
+        $.post('easucks/ss_ajax', {'act': 'mac_ignore'}, function(data){
+            $('#mac_ignore_value').val(data).prop("disabled", false);
         });
     }
 
@@ -171,7 +171,7 @@ $(function () {
         get_ipdst_force();
         get_ipsrc_ignore();
         get_ipdst_ignore();
-        get_mac_list();
+        get_mac_ignore();
     }
 
     /*
@@ -408,7 +408,7 @@ $(function () {
     });
 
     //设备MAC过滤 提交表单
-    $("#submit_mac_list").click(function (e) {
+    $("#submit_mac_ignore").click(function (e) {
         var $bt = $(this);
         if ($bt.hasClass('disable')) {
             return;
@@ -416,8 +416,8 @@ $(function () {
         $bt.addClass("disable");
         $bt.text(HiWiFi.i18n.prop("g_retaining"));
         var request_data = {
-            'act':  'ignoremaclist_save',
-            'list': $('#mac_list_value').val()
+            'act':  'mac_ignore_save',
+            'list': $('#mac_ignore_value').val()
         };
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
