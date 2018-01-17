@@ -138,12 +138,12 @@ ss_iptables_add() {
 
             # 生成gfwlist.conf
             awk '{print "ipset=/"$1"/gfwlist"}' /etc/$NAME/gfw.list >> $DNSMASQ_CONFIG_DIR/gfwlist.conf
-            # 生成强制走代理域名列表force_list.conf
-            sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-            awk '{print "ipset=/"$1"/gfwlist"}' /etc/$NAME/my.list >> $DNSMASQ_CONFIG_DIR/force_list.conf
-            # 生成强制不走代理域名列表ignore_list.conf
-            sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.list
-            awk '{print "ipset=/"$1"/ignorelist"}' /etc/$NAME/ignore.list >> $DNSMASQ_CONFIG_DIR/ignore_list.conf
+            # 生成强制走代理域名列表domain_force.conf
+            sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/domain.force
+            awk '{print "ipset=/"$1"/gfwlist"}' /etc/$NAME/domain.force >> $DNSMASQ_CONFIG_DIR/domain_force.conf
+            # 生成强制不走代理域名列表domain_ignore.conf
+            sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/domain.ignore
+            awk '{print "ipset=/"$1"/ignorelist"}' /etc/$NAME/domain.ignore >> $DNSMASQ_CONFIG_DIR/domain_ignore.conf
             ;;
         game)
             iptables -t nat -A $NAME-PREROUTING -m set --match-set china dst -j RETURN
@@ -165,9 +165,9 @@ ss_iptables_add() {
             ;;
     esac
 
-    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.mac
+    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/mac.ignore
     local black_mac
-    awk '{print $0}' /etc/$NAME/ignore.mac |
+    awk '{print $0}' /etc/$NAME/mac.ignore |
     while read black_mac; do
         [ -z "$black_mac" ] && continue
         iptables -t nat -I $NAME-PREROUTING -m mac --mac-source $black_mac -j RETURN
@@ -196,16 +196,16 @@ start() {
 
     # 生成gfwlist.conf
     awk '{print "server=/"$1"/127.0.0.1#54"}' /etc/$NAME/gfw.list > $DNSMASQ_CONFIG_DIR/gfwlist.conf
-    # 生成强制走代理域名列表force_list.conf
-    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/my.list
-    awk '{print "server=/"$1"/127.0.0.1#54"}' /etc/$NAME/my.list > $DNSMASQ_CONFIG_DIR/force_list.conf
-    # 生成强制不走代理域名列表ignore_list.conf
-    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/ignore.list
-    awk '{print "server=/"$1"/#"}' /etc/$NAME/ignore.list > $DNSMASQ_CONFIG_DIR/ignore_list.conf
+    # 生成强制走代理域名列表domain_force.conf
+    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/domain.force
+    awk '{print "server=/"$1"/127.0.0.1#54"}' /etc/$NAME/domain.force > $DNSMASQ_CONFIG_DIR/domain_force.conf
+    # 生成强制不走代理域名列表domain_ignore.conf
+    sed -i 's/^[ ]*//;s/[ \t]*$//' /etc/$NAME/domain.ignore
+    awk '{print "server=/"$1"/#"}' /etc/$NAME/domain.ignore > $DNSMASQ_CONFIG_DIR/domain_ignore.conf
 
     ss_iptables_add
 
-    #官方dnsmasq重启时自动启动pdnsd
+    # 官方dnsmasq重启时自动启动pdnsd
     uci set dhcp.@dnsmasq[0].honest=1
     uci commit
     /etc/init.d/dnsmasq restart
@@ -221,12 +221,12 @@ stop() {
     fi
     kill -9 `ps | grep "$DAEMON -c $SSCONFIG" | grep -v grep | awk '{print $1}'` 2>/dev/null
 
-    #删除针对dnsmasq生成的域名列表
+    # 删除针对dnsmasq生成的域名列表
     rm -f $DNSMASQ_CONFIG_DIR/gfwlist.conf
-    rm -f $DNSMASQ_CONFIG_DIR/force_list.conf
-    rm -f $DNSMASQ_CONFIG_DIR/ignore_list.conf
+    rm -f $DNSMASQ_CONFIG_DIR/domain_force.conf
+    rm -f $DNSMASQ_CONFIG_DIR/domain_ignore.conf
 
-    #官方dnsmasq重启时自动重启pdnsd
+    # 官方dnsmasq重启时自动重启pdnsd
     uci delete dhcp.@dnsmasq[0].honest
     uci commit
     /etc/init.d/dnsmasq restart
