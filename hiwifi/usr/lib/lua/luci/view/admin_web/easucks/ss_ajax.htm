@@ -10,7 +10,7 @@ local json = ''
 local dnsmasq_script = '/etc/init.d/dnsmasq'
 local ss_init_script = '/etc/init.d/easucks'
 local ss_binary_path = '/usr/bin/ss-redir'
-local ss_config_path = '/etc/config/easucks'
+local ss_config_file = '/etc/config/easucks'
 
 local act = luci.http.formvalue('act')
 local ss_server_choice = luci.http.formvalue('ss_server_choice')
@@ -24,7 +24,7 @@ local ss_runnin_mode = luci.http.formvalue('ss_runnin_mode')
 local ss_remote_dnss = luci.http.formvalue('ss_remote_dnss')
 local ss_local_port = luci.http.formvalue('ss_local_port')
 
-local gfw_list = '/etc/easucks/gfw.list'
+local gfw_list_file = '/etc/easucks/gfw.list'
 local mac_ignore_file = '/etc/easucks/mac.ignore'
 local ipsrc_force_file = '/etc/easucks/ipsrc.force'
 local ipdst_force_file = '/etc/easucks/ipdst.force'
@@ -45,7 +45,7 @@ action = {
     end,
     -- 获取配置信息
     ['config'] = function()
-        luci.sys.exec('touch '..ss_config_path..';')
+        luci.sys.exec('touch '..ss_config_file..';')
         if ss_server_choice == '' then
             ss_server_choice = luci.sys.exec("uci -q get easucks.ss_server_choice")
         end
@@ -60,7 +60,7 @@ action = {
     end,
     -- 保存节点信息
     ['save'] = function()
-        luci.sys.exec('touch '..ss_config_path..';')
+        luci.sys.exec('touch '..ss_config_file..';')
         luci.sys.exec('uci set easucks.'..ss_server_choice..'=node;')
         luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_name='..ss_server_name..';')
         luci.sys.exec('uci set easucks.'..ss_server_choice..'.ss_server_ipad='..ss_server_ipad..';')
@@ -85,7 +85,7 @@ action = {
     end,
     -- 启动服务
     ['start'] = function()
-        luci.sys.exec('touch '..ss_config_path..';')
+        luci.sys.exec('touch '..ss_config_file..';')
         luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
         luci.sys.exec('uci commit;')
         luci.sys.exec(ss_init_script..' start')
@@ -93,7 +93,7 @@ action = {
     end,
     -- 重启服务
     ['restart'] = function()
-        luci.sys.exec('touch '..ss_config_path..';')
+        luci.sys.exec('touch '..ss_config_file..';')
         luci.sys.exec('uci set easucks.ss_server_choice='..ss_server_choice..';')
         luci.sys.exec('uci commit;')
         luci.sys.exec(ss_init_script..' restart')
@@ -114,7 +114,7 @@ action = {
     end,
     -- 读取内置域名列表
     ['gfwlist'] = function()
-        json = luci.sys.exec('cat '..gfw_list)
+        json = luci.sys.exec('cat '..gfw_list_file)
     end,
     -- 读取强制走代理域名列表
     ['domain_force'] = function()
