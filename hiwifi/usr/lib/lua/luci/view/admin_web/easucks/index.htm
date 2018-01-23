@@ -9,8 +9,8 @@ local i18n = require "luci.i18n"
 include('admin_web/header')
 
 -- 极路由官方固件1.4.5版变动了css文件所在目录
-local css_location = luci.sys.exec("if [ -f resource..'/v2/style/net.css' ]; then echo -n true; else echo -n false; fi")
-if css_location == true then
+local css_location = luci.sys.exec("if [ -f '/www"..resource.."/v2/style/net.css' ]; then echo -n 'true'; else echo -n 'false'; fi")
+if css_location == 'true' then
     css_location = resource..'/v2/style/net.css';
 else
     css_location = resource..'/v2/style/admin_web/net.css';
