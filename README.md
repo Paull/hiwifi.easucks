@@ -2,6 +2,7 @@
 - 目前只是个SS插件而已。
 - 完全采用极路由后台风格设计（[截图1](screenshots/01.home.png)，[截图2](screenshots/02.config.png)），插件样式更美观。
 - 重点优化了GFWLIST模式，集成FIFA相关的域名（[截图3](screenshots/03.mylist.png)），做到EA、LIVE、PSN、ORIGIN走代理，下载和网战仍然是裸连。所以推荐大家使用这个模式。
+- 网页模式和游戏模式默认开启国内IP白名单，不影响国内网站的正常访问和速度
 - 但我们的目标不是做个SS插件，未来会推出更多FIFA相关的功能，专注游戏而不是梯子，因为游戏本没有被墙，只是线路拥堵而已。
 
 ## 主要功能
@@ -79,7 +80,6 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
 - [x] 新增自定义IP列表功能，可强制某IP走代理或强制不走代理
 - [ ] 测速功能
 - [ ] 提供离线安装包
-- [ ] 尝试Cross Compile，提供大于3.0的ss版本
 - [ ] 区分自定义和傻瓜式两种界面
 - [ ] 查看匹配对手的IP或周赛服务器的IP
 
