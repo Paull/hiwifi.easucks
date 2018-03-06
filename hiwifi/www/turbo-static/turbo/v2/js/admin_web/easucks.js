@@ -290,7 +290,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: '域名列表保存成功，并且已生效，无需重启',
+                title: '域名列表保存成功，但未生效，需重启插件',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));
@@ -312,7 +312,7 @@ $(function () {
         $.post('easucks/ss_ajax', request_data, function(data){
             HiWiFi.popDialog({
                 type: "G-text",
-                title: '域名列表保存成功，并且已生效，无需重启',
+                title: '域名列表保存成功，但未生效，需重启插件',
                 content: ""
             }).time(2500);
             $bt.removeClass("disable").text(HiWiFi.i18n.prop("g_save"));

@@ -114,6 +114,12 @@ local i18n = require "luci.i18n" %>
                                         </td>
                                     </tr>
                                     <tr>
+                                        <th><%=i18n.translate("web_boot")%></th>
+                                        <td>
+                                            <a href="javascript:;" class="G-switch-btn off btn" id="ss_auto_start"><span></span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th>远程DNS</th>
                                         <td>
                                             <select id="ss_remote_dnss" name="ss_remote_dnss" required="required" class="J_selectOriginal">
