@@ -1,6 +1,6 @@
 NAME=加密更新
 VERSION=3.1.3
-DOWNFROM=https://downloads.llbbll.com
+DOWNFROM=https://yourdownloadmirror/downloads
 FILENAME=ss-redir
 echo ">>>正在关闭插件..."
 /etc/init.d/easucks stop
