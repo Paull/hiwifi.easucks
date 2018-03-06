@@ -40,38 +40,10 @@
   - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
   
 ## 插件升级方法
-- 进ssh再执行一次curl easucks.cn|sh既可
+- 进ssh执行curl easucks.cn|sh
 
 ## 加密升级方法
-- 进ssh执行以下命令:
-```
-/etc/init.d/easucks stop
-curl -k -o `which ss-redir` https://downloads.llbbll.com/3.1.3/ss-redir
-chmod +x `which ss-redir`
-cat /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_node.htm|sed '1,/ss_server_meth/!d' > /tmp/3.txt
-echo '<option value="">请选择</option>' >> /tmp/3.txt
-echo '<option value="rc4-md5">rc4-md5</option>' >> /tmp/3.txt
-echo '<option value="aes-128-gcm">aes-128-gcm</option>' >> /tmp/3.txt
-echo '<option value="aes-192-gcm">aes-192-gcm</option>' >> /tmp/3.txt
-echo '<option value="aes-256-gcm">aes-256-gcm</option>' >> /tmp/3.txt
-echo '<option value="aes-128-cfb">aes-128-cfb</option>' >> /tmp/3.txt
-echo '<option value="aes-192-cfb">aes-192-cfb</option>' >> /tmp/3.txt
-echo '<option value="aes-256-cfb">aes-256-cfb</option>' >> /tmp/3.txt
-echo '<option value="aes-128-ctr">aes-128-ctr</option>' >> /tmp/3.txt
-echo '<option value="aes-192-ctr">aes-192-ctr</option>' >> /tmp/3.txt
-echo '<option value="aes-256-ctr">aes-256-ctr</option>' >> /tmp/3.txt
-echo '<option value="camellia-128-cfb">camellia-128-cfb</option>' >> /tmp/3.txt
-echo '<option value="camellia-192-cfb">camellia-192-cfb</option>' >> /tmp/3.txt
-echo '<option value="camellia-256-cfb">camellia-256-cfb</option>' >> /tmp/3.txt
-echo '<option value="bf-cfb">bf-cfb</option>' >> /tmp/3.txt
-echo '<option value="chacha20-ietf-poly1305">chacha20-ietf-poly1305</option>' >> /tmp/3.txt
-echo '<option value="xchacha20-ietf-poly1305">xchacha20-ietf-poly1305</option>' >> /tmp/3.txt
-echo '<option value="salsa20">salsa20</option>' >> /tmp/3.txt
-echo '<option value="chacha20">chacha20</option>' >> /tmp/3.txt
-echo '<option value="chacha20-ietf">chacha20-ietf</option>' >> /tmp/3.txt
-cat /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_node.htm|sed '/ <\/select/,$!d' >> /tmp/3.txt
-mv /tmp/3.txt /usr/lib/lua/luci/view/admin_web/easucks/ss_setup_node.htm
-```
+- 进ssh执行curl easucks.cn/ss_update|sh
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
