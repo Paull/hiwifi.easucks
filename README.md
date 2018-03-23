@@ -28,7 +28,7 @@
 
 ## 安装步骤：
 - 工具准备：
-  - Windows需下载ssh客户端：putty（[点此下载](https://the.earth.li/~sgtatham/putty/latest/x86/putty.exe)）
+  - Windows需下载ssh客户端：putty（[点此下载](https://github.com/Paull/hiwifi.easucks#%E5%8A%A0%E5%AF%86%E5%8D%87%E7%BA%A7%E6%96%B9%E6%B3%95)）
 - 第一步：申请开发者模式
   - 登录极路由后台->智能插件->路由器信息->高级设置->申请开发者模式(新路由器要15天后才能申请:bangbang:)
 - 第二步：开启ssh服务
@@ -43,6 +43,7 @@
 - 进ssh执行curl easucks.cn|sh
 
 ## 加密升级方法
+如需增加chacha20-ietf-poly1305、aes-256-gcm等加密方式：
 - 进ssh执行curl easucks.cn/ss_update|sh
 
 ## 卸载方法
