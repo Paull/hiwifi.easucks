@@ -40,11 +40,11 @@
   - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
   
 ## 插件升级方法
-- 进ssh执行curl easucks.cn|sh
+- 进ssh执行`curl easucks.cn|sh`
 
 ## 加密升级方法
 如需增加chacha20-ietf-poly1305、aes-256-gcm等加密方式：
-- 进ssh执行curl easucks.cn/ss_update|sh
+- 进ssh执行`curl easucks.cn/ss_update|sh`
 
 ## 卸载方法
 - 推荐直接恢复出厂，简单干净。
