@@ -72,6 +72,8 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
   - 增加DNS运行状态显示
 - 1.4.5d
   - 新增自定义IP列表功能，可强制某IP走代理或强制不走代理
+- 1.4.5e
+  - 尝试支持IPv6服务器，此版本只支持了服务器节点可以填写IPv6地址，但流量并不能成功转发，对IPv4用户没有影响
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
@@ -86,6 +88,7 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
 - [x] 更新加密方式
 - [ ] 测速功能
 - [ ] 提供离线安装包
+- [ ] IPv6支持
 - [ ] 区分自定义和傻瓜式两种界面
 - [ ] 查看匹配对手的IP或周赛服务器的IP
 
