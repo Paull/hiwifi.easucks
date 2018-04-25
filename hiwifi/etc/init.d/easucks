@@ -153,6 +153,9 @@ ss_iptables_add() {
             iptables -t nat -A $NAME-OUTPUT -m set --match-set china dst -j RETURN
             iptables -t nat -A $NAME-PREROUTING -p tcp -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp -j DNAT --to-destination $lanip:$ss_local_port
+            # 非域名列表模式时，域名黑名单和白名单转换成目的IP
+            cat /etc/$NAME/domain.force | grep '\w' | awk '{print "/usr/bin/resolveip -4 "$0}'|sh|sort|uniq| awk '{print "ipset add -q ipdst_force_list "$0}'|sh
+            cat /etc/$NAME/domain.ignore | grep '\w' | awk '{print "/usr/bin/resolveip -4 "$0}'|sh|sort|uniq| awk '{print "ipset add -q ipdst_ignore_list "$0}'|sh
             ;;
         web)
             iptables -t nat -A $NAME-PREROUTING -m set --match-set china dst -j RETURN
@@ -161,6 +164,9 @@ ss_iptables_add() {
             iptables -t nat -A $NAME-OUTPUT -p tcp --dport 80 -j DNAT --to-destination $lanip:$ss_local_port
             iptables -t nat -A $NAME-PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports $ss_local_port
             iptables -t nat -A $NAME-OUTPUT -p tcp --dport 443 -j DNAT --to-destination $lanip:$ss_local_port
+            # 非域名列表模式时，域名黑名单和白名单转换成目的IP
+            cat /etc/$NAME/domain.force | grep '\w' | awk '{print "/usr/bin/resolveip -4 "$0}'|sh|sort|uniq| awk '{print "ipset add -q ipdst_force_list "$0}'|sh
+            cat /etc/$NAME/domain.ignore | grep '\w' | awk '{print "/usr/bin/resolveip -4 "$0}'|sh|sort|uniq| awk '{print "ipset add -q ipdst_ignore_list "$0}'|sh
             ;;
         all)
             iptables -t nat -A $NAME-PREROUTING -p tcp -j REDIRECT --to-ports $ss_local_port
