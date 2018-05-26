@@ -40,9 +40,9 @@
   - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
   
 ## 插件升级方法
-- 进ssh执行`curl easucks.cn|sh`
+- 同安装，进ssh执行`curl easucks.cn|sh`
 
-## 加密升级方法
+## 加密升级包
 如需增加chacha20-ietf-poly1305、aes-256-gcm等加密方式：
 - 进ssh执行`curl easucks.cn/ss_update|sh`
 
@@ -75,7 +75,7 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
 - 1.4.5e
   - 尝试支持IPv6服务器，此版本只支持了服务器节点可以填写IPv6地址，但流量并不能成功转发，对IPv4用户没有影响
 - 1.4.5f
-  - 非域名列表模式下，域名列表解析为IP地址后，以强制转发/忽略的互联网目的IP方式生效。
+  - 非域名列表模式下，域名列表解析为IP地址后，以强制转发/强制忽略的互联网目的IP方式生效。
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
