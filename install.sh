@@ -25,6 +25,20 @@ if [ $? -eq 0 ]; then
             sed -i 's/<ul id="advanced_setup">/<ul id="advanced_setup">\n<li><a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'easucks'"'"')%>">'"$NAME"'<\/a><\/li>/' /usr/lib/lua/luci/view/admin_web/network/index.htm
         fi
     fi
+	
+	# 添加到手机版后台, modified from https://github.com/qiwihui/hiwifi-ss/blob/master/shadow.sh
+    cd /usr/lib/lua/luci/view/admin_mobile
+    cp home.htm home.htm.backup
+    mobile_router_control_line_num=`grep -n "mobile_router_control" home.htm | cut -d : -f 1`
+    ul_end_relative_line_num=`tail -n +$mobile_router_control_line_num home.htm | grep -n -m 1 "/ul" | cut -d : -f 1`
+    ul_end_line_num=`expr $mobile_router_control_line_num + $ul_end_relative_line_num - 1`
+    ul_end_line_num_sub_1=`expr $ul_end_line_num - 1`
+    head -n $ul_end_line_num_sub_1 home.htm > new_home.htm
+    echo '<li> <a href="<%=luci.dispatcher.build_url('"'"'admin_web'"'"','"'"'easucks'"'"')%>" target="_blank">安全上网<span class="right-bar"><em class="enter-pointer"></em></span></a> </li>' >> new_home.htm
+    tail -n +$ul_end_line_num home.htm >> new_home.htm
+    mv new_home.htm home.htm
+    echo -e '...[\e[32m手机版后台安装成功\e[0m]'
+	
     echo -n ">>>正在安装系统插件."
     opkg update > /dev/null
     echo -n "."
