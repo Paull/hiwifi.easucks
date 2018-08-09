@@ -76,6 +76,8 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
   - 尝试支持IPv6服务器，此版本只支持了服务器节点可以填写IPv6地址，但流量并不能成功转发，对IPv4用户没有影响
 - 1.4.5f
   - 非域名列表模式下，域名列表解析为IP地址后，以强制转发/强制忽略的互联网目的IP方式生效。
+- 1.4.5g
+  - 添加默认强制走代理的几个IP段，加速aws和telegram
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
