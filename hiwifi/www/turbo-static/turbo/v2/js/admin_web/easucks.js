@@ -619,12 +619,12 @@ $(function () {
     //SS服务器别名的特殊判断
     jQuery.validator.addMethod("noSpecialChars", function (value, element) {
         "use strict";
-        if(/[\[\]\(\)\{\}\<\>\.\=\;]/.test(value)){
+        if(/[\[\]\(\)\{\}\<\>\=\;]/.test(value)){
             return this.optional(element) || false;
         }else{
             return this.optional(element) || true;
         }
-    }, "别名不能包含[](){}<>.=;等特殊字符");
+    }, "别名不能包含[](){}<>=;等特殊字符");
 
     //SS服务器地址的特殊判断
     jQuery.validator.addMethod("ipAndDomainCheck", function (value, element) {
