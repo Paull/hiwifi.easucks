@@ -98,6 +98,14 @@ local i18n = require "luci.i18n" %>
                                             <a href="javascript:;" class="text-btn" id="ss_refresh"><%=i18n.translate("g_refresh")%></a>
                                         </td>
                                     </tr>
+                                    <!--网络测试（Add by wybb）-->            
+                                    <tr>
+                                        <th>网络测试</th>
+                                        <td class="text-td">
+                                             <span id="network_test_result" style="display:inline-block;width:80px;">未进行</span>
+                                             <a href="javascript:;" class="text-btn" id="network_test">运行测试</a>
+                                        </td>
+                                    </tr>
                                 </table>
                                 <div class="super-set-bar G-handle" id="ss_advanced_setup_bt">
                                     <span><%=i18n.translate("web_advanced_set")%></span><span class="icon icon16"></span>
