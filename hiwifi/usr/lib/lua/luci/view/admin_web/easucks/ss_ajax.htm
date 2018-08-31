@@ -209,6 +209,9 @@ action = {
         file:close()
         luci.sys.exec("cat /tmp/tmplist|sed 's/[\\t]//g'|sed 's/ //g'|tr '\\n' ' '|sed 's/\^ *//g'|sed 's/  */ /g'|tr ' ' '\\n' > "..mac_ignore_file)
         json = '{"state": 1}'
+    end,
+    ['network_test'] = function()
+        json = luci.sys.exec('curl -o /dev/null -s --connect-timeout 5 -m 5  -w "{\\"code\\":\\"%{http_code}\\", \\"time\\":%{time_starttransfer}}" www.google.com')
     end
 }
 if action[act] then
