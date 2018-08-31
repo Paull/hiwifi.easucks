@@ -718,4 +718,23 @@ $(function () {
             }).time(1500);
         }, 'json');
     });
+    //网络测速功能(Add by wybb)
+    $('#network_test').on('click', function(){
+    	var network_test_result = $('#network_test_result');
+    	var network_test_bt = $(this);
+    	if(network_test_bt.data('isStarted'))
+    		return;
+    	network_test_bt.data('isStarted', true);
+    	network_test_bt.css('color', '#909090');
+    	$.post('easucks/ss_ajax', {'act': 'network_test'}, function(data){
+        if(data['code'] != 200){
+        	network_test_result.text('测试失败');
+        }
+        else{
+        		network_test_result.text(data['time'] * 1000 + '毫秒');
+        }
+        network_test_bt.css('color','');  
+        network_test_bt.removeData('isStarted');
+      }, 'json');
+    });
 });
