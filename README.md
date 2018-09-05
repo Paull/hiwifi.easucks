@@ -90,7 +90,7 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
 - [x] 显示DNS运行状态
 - [x] 新增自定义IP列表功能，可强制某IP走代理或强制不走代理
 - [x] 更新加密方式
-- [ ] 测速功能
+- [x] 测速功能
 - [ ] 提供离线安装包
 - [ ] IPv6支持
 - [ ] 区分自定义和傻瓜式两种界面
