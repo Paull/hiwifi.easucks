@@ -1,20 +1,23 @@
-# 最新功能
-- FIFA19锁服功能，强制锁定中亚（香港）服务器（[截图7](screenshots/07.fifa19regionlock.png)）
-- 适用于Division Rivals模式、周赛模式以及俱乐部模式（其中俱乐部模式可查看当前所在服务器[截图8](screenshots/08.likeapro.png)）
+# FIFA19锁服功能
+- 强制锁定中亚（香港）服务器（[截图7](screenshots/07.fifa19regionlock.png)）
+- 适用于Division Rivals模式、周赛模式以及俱乐部模式（其中俱乐部模式可查看当前所在服务器，[截图8](screenshots/08.likeapro.png)）
+- 锁服功能仅适用于裸连香港服务器延时较低的小伙伴们
+- 裸连延时测试方法：用电脑ping 180.150.147.44，目前国内平均延时50ms左右，属于比较流畅
+- 非极路由玩家可以继续使用[以前的测试脚本](https://github.com/Paull/hiwifi.easucks/issues/77)
 
 # FIFA助手
 - 目前只是个SS插件而已。
 - 完全采用极路由后台风格设计（[截图1](screenshots/01.home.png)，[截图2](screenshots/02.config.png)），插件样式更美观。
-- 重点优化了GFWLIST模式，集成FIFA相关的域名（[截图3](screenshots/03.mylist.png)），做到EA、LIVE、PSN、ORIGIN走代理，下载和网战仍然是裸连。所以推荐大家使用这个模式。
-- 网页模式和游戏模式默认开启国内IP白名单，不影响国内网站的正常访问和速度
-- 拥有更多的自主权，可以自定义强制走代理或强制不走代理的域名、IP、IP段甚至是MAC地址
-- 但我们的目标不是做个SS插件，未来会推出更多FIFA相关的功能，专注游戏而不是梯子，因为游戏本没有被墙，只是线路拥堵而已。
+- 重点推荐域名列表模式，集成FIFA有关域名（[截图3](screenshots/03.mylist.png)），实现EA、LIVE、PSN、ORIGIN等便秘网络走代理，下载和踢球仍然是裸连。
+- 网页模式和游戏模式默认开启国内IP白名单，不影响国内网站的正常访问和速度。
+- 高级选项可以自定义以域名列表、IP列表、MAC列表，走不走代理拥有更多的自主权。
+- 我们的目标不是做SS插件，专注游戏而不是梯子，因为游戏本没有被墙，只是线路拥堵而已，如果裸连流畅的话当然更推荐裸连。
 
-## 主要功能
-- 优化网络：国内正统FIFA的网络环境较为恶劣，玩家长期深受EA掉线、匹配难、高延时等网络问题的困扰，常常需要挂SS才能解决问题。
-- 切匹配池：同上，挂了SS以后，根据SS的GeoIP决定FIFA的匹配池（理论）。
-- 查看对手IP（开发中）：FIFA网战常常匹配到高延时、卡顿、卡训练场的对手，通过查看对手的IP，可以得知对手地理位置和运营商这两个参考信息，进一步分析自己匹配池，从而使优化匹配池成为可能。
-- 查看服务器IP（开发中）：类似查看对手，但FIFA的Pro模式和FUT Champions模式是通过服务器转发而非P2P直连的，看不到对手的IP，所以只能看到决定你延时多少的其中一半因素--->服务器IP。
+## FIFA常见网络问题汇总
+- 掉EA：通过挂SS改善TCP稳定性（FIFA助手的域名列表模式、梅林的白名单模式和游戏模式、老毛子等固件也可以）。
+- 赛季模式搜人难：提升NAT等级至开放，方法一般是光猫桥接后使用路由器拔号就可以解决。
+- 在线模式延时大：方案一，挂SS，通过代理改善UDP稳定性（梅林的模式，老毛子有UDP转发选项，但FIFA助手的SS不支持UDP）。
+- 在线模式延时大：方案二，使用FIFA助手锁定中亚（香港）服务器，裸连踢球更流畅。
 
 ## 支持的路由器型号及固件
 路由器型号 | 官方固件<1.2.5 | 官方固件 >= 1.2.5 | 非官方固件 |
@@ -25,7 +28,7 @@
 极4 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极B70 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极Enjoy | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
-极路由x美的 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极路由美的 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极路由其它 | :heavy_multiplication_x:不支持 | :interrobang:待测 | :heavy_multiplication_x:不支持 |
 
 理论支持极路由所有型号，需升级至官方固件最新版:bangbang: 
