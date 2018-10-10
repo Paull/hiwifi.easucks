@@ -1,3 +1,7 @@
+# 最新功能
+- FIFA19锁服功能，强制锁定中亚（香港）服务器（[截图7](screenshots/07.fifa19regionlock.png)）
+- 适用于Division Rivals模式、周赛模式以及俱乐部模式（其中俱乐部模式可查看当前所在服务器[截图8](screenshots/08.likeapro.png)）
+
 # FIFA助手
 - 目前只是个SS插件而已。
 - 完全采用极路由后台风格设计（[截图1](screenshots/01.home.png)，[截图2](screenshots/02.config.png)），插件样式更美观。
