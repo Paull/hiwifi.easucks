@@ -1,0 +1,32 @@
+<%
+--[[
+    Info      FIFA助手插件MAC页
+    Author    Paull  <paull@qq.com>
+    Copyright 2018
+]]--
+local i18n = require "luci.i18n" %>
+            <div id="ss_update" style="display: none;">
+                <div class="G-form-main">
+                    <div class="G-form-main-hd">
+                        <span class="G-handle right go_back">
+                            <span class="icon back"></span><span><%=i18n.translate("web_go_back")%></span>
+                        </span>
+                        <span class="icon setting"></span><span>FIFA助手升级</span>
+                    </div>
+                    <div class="G-form-main-bd">
+                        <div class="ss-panel">
+                            <table style="width: auto; margin: auto">
+                                <tr>
+                                    <td colspan="2" style="padding-left:15px;">
+                                        <p class="td-tit">本地版本</p>
+                                        <p class="td-tit">远程版本</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-btn-bar">
+                            <a href="javascript:;" class="btn disable" id="submit_mac_ignore">升级</a>
+                        </div>
+                    </div>
+                </div>
+            </div>

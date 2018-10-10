@@ -109,6 +109,16 @@ $(function () {
         }, 'json');
     }
 
+    //获取SS版本信息
+    function get_ss_version() {
+        $.post('easucks/ss_ajax', {'act': 'version'}, function(data){
+            g_data_ss['version'] = data;
+            if(parseInt(data['local_version']) < parseInt(data['remote_version'])){
+                $('#ss_update_bt').text('有新版本');
+            }
+        }, 'json');
+    }
+
     //获取强制走代理域名列表
     function get_domain_force() {
         $.post('easucks/ss_ajax', {'act': 'domain_force'}, function(data){
@@ -170,6 +180,7 @@ $(function () {
         });
         Openapi.cancelRequest(request_configs.alias);
 
+        get_ss_version();
         get_ss_config();
         get_mac_ignore();
         get_ipsrc_force();
