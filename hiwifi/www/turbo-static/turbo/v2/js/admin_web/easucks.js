@@ -63,6 +63,12 @@ $(function () {
                 $('#ss_auto_start').removeClass('on').addClass('off');
             }
 
+            if(data.fifa19_region_lock == 'HK'){
+                $('#fifa19_region_lock').removeClass('off').addClass('on');
+            }else{
+                $('#fifa19_region_lock').removeClass('on').addClass('off');
+            }
+
             //SS运行状态
             if(data.ss_state == 'running'){
                 $("#ss_status").children(':first').removeClass("icon-x").addClass("icon-j");
@@ -607,6 +613,29 @@ $(function () {
 
             $.post('easucks/ss_ajax', request_data, function(data){
                 if (data['ss_enabled'] == 'false') {
+                    $bt.removeClass("on").addClass("off");
+                }else{
+                    $bt.removeClass("off").addClass("on");
+                }
+                $bt.prop('disabled', false);
+            }, 'json');
+        }
+    });
+
+    //FIFA19强制锁定中亚服功能
+    $("#fifa19_region_lock").on("click", function () {
+        var $bt = $(this);
+        if(! $bt.prop('disabled')){
+            var request_data = {'act': 'fifa19_region_lock'};
+            if ($bt.hasClass("on"))
+                request_data['region'] = 'disable';
+            else
+                request_data['region'] = 'HK';
+
+            $bt.prop('disabled', true);
+
+            $.post('easucks/ss_ajax', request_data, function(data){
+                if (data['fifa19_region_lock'] != 'HK') {
                     $bt.removeClass("on").addClass("off");
                 }else{
                     $bt.removeClass("off").addClass("on");

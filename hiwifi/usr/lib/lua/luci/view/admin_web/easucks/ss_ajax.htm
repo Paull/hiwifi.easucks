@@ -36,12 +36,14 @@ local domain_ignore_file = '/etc/easucks/domain.ignore'
 action = {
     -- 获取运行信息
     ['status'] = function()
+        luci.sys.exec('touch '..ss_config_file..';')
         local ss_state = luci.sys.exec('if [ "`ps | grep '..ss_binary_path..' | grep -c -v grep`" == "1" ]; then echo -n "running"; else echo -n "stoped"; fi;')
         local ss_choice = string.gsub(luci.sys.exec("uci -q get easucks.ss_server_choice"), '\n', '')
         local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true; else echo -n false; fi")
+        local fifa19_region_lock = luci.sys.exec("uci get easucks.fifa19_region_lock|tr -d '\n'")
         local dns_53_state = luci.sys.exec('if [ $(ps|grep dnsmasq|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
         local dns_54_state = luci.sys.exec('if [ $(ps|grep pdnsd|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
-        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'", "dns_53_state": "'..dns_53_state..'", "dns_54_state": "'..dns_54_state..'"}'
+        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'", "dns_53_state": "'..dns_53_state..'", "dns_54_state": "'..dns_54_state..'", "fifa19_region_lock": "'..fifa19_region_lock..'"}'
     end,
     -- 获取配置信息
     ['config'] = function()
@@ -76,6 +78,7 @@ action = {
     end,
     -- 删除节点
     ['delete'] = function()
+        luci.sys.exec('touch '..ss_config_file..';')
         luci.sys.exec('uci delete easucks.'..ss_server_choice..';')
         luci.sys.exec('uci commit;')
         ss_server_choice = string.gsub(luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | awk -F= '{if($2==\"node\") print $1;}' | head -1"), '\n', '')
@@ -111,6 +114,49 @@ action = {
         luci.sys.exec(ss_init_script..' '..service)
         local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true;else echo -n false;fi")
         json = '{"state": 1, "ss_enabled": "'..ss_enabled..'"}'
+    end,
+    -- FIFA19强制锁中亚服务器
+    ['fifa19_region_lock'] = function()
+        region = luci.http.formvalue('region')
+        luci.sys.exec('touch '..ss_config_file..';')
+        luci.sys.exec('uci set easucks.fifa19_region_lock='..region..';')
+        luci.sys.exec('uci commit;')
+        local fifa19_region_lock = luci.sys.exec("uci get easucks.fifa19_region_lock|tr -d '\n'")
+        if(fifa19_region_lock == 'HK')
+        then
+            luci.sys.exec("iptables -t mangle -N easucks-PREROUTING")
+            luci.sys.exec("iptables -t mangle -A PREROUTING -i br-lan -j easucks-PREROUTING")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.215.132/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.215.140/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.221.170/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.221.171/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.165.200/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.165.201/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.28.50/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.28.51/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.36.61/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.36.62/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.42.240/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.42.241/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.38.100.162/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.38.100.170/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.57.76.162/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.57.76.171/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 18.184.251.35/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.179.200.211/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.179.200.226/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.179.203.80/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.50.104.206/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.50.104.221/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 203.195.120.68/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 203.195.122.124/32 -j DROP")
+            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 52.58.40.163/32 -j DROP")
+        else
+            luci.sys.exec("iptables -t mangle -D PREROUTING -i br-lan -j easucks-PREROUTING 1>/dev/null 2>&1")
+            luci.sys.exec("iptables -t mangle -F easucks-PREROUTING 1>/dev/null 2>&1")
+            luci.sys.exec("iptables -t mangle -X easucks-PREROUTING 1>/dev/null 2>&1")
+        end
+        json = '{"state": 1, "fifa19_region_lock": "'..fifa19_region_lock..'"}'
     end,
     -- 读取内置域名列表
     ['gfwlist'] = function()
