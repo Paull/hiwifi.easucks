@@ -5,6 +5,8 @@
     Copyright 2018
 ]]--
 
+local first_version = '20181008'
+
 local json = ''
 
 local dnsmasq_script = '/etc/init.d/dnsmasq'
@@ -59,6 +61,19 @@ action = {
             local ss_config = luci.sys.exec("uci show easucks."..ss_server_choice.." | grep easucks."..ss_server_choice..". | sed 's/easucks\\."..ss_server_choice.."\\.//g' | awk -F= '{config[$1]=$2;}END{for(i in config){print \"\\42\"i\"\\42: \\42\"config[i]\"\\42,\"}}' | tr '\\n' ' ' | sed 's/, $/ /g'")
             json = string.gsub('{"ss_servers": '..ss_servers..', "ss_server_choice": "'..ss_server_choice..'", '..ss_config..'}', ', }', '}')
         end
+    end,
+    -- 获取版本信息
+    ['version'] = function()
+        luci.sys.exec('touch '..ss_config_file..';')
+        local local_version = luci.sys.exec("uci get easucks.version|tr -d '\n'")
+        if(local_version == '')
+        then
+            local_version = first_version
+            luci.sys.exec("uci set easucks.version="..local_version)
+            luci.sys.exec("uci commit")
+        end
+        local remote_version = luci.sys.exec("curl easucks.cn/version|tr -d '\n'")
+        json = '{"local_version": "'..local_version..'", "remote_version": "'..remote_version..'"}'
     end,
     -- 保存节点信息
     ['save'] = function()

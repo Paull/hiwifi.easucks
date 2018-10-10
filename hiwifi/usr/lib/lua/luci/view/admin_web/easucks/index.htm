@@ -61,6 +61,7 @@ end
                             <li><a href="javascript:;" id="ss_setup_domain_bt">域名列表管理</a></li>
                             <li><a href="javascript:;" id="ss_setup_ip_bt">IP列表管理</a></li>
                             <li><a href="javascript:;" id="ss_setup_mac_bt">设备黑名单管理</a></li>
+                            <li><a href="javascript:;" id="ss_update_bt">插件升级</a></li>
                         </ul>
                     </div>
                 </div>
@@ -77,6 +78,9 @@ end
 
             <!-- SS MAC部分 -->
             <% include('admin_web/easucks/ss_setup_mac') %>
+
+            <!-- 插件升级部分 -->
+            <% include('admin_web/easucks/update') %>
 
         </div>
     </div>
