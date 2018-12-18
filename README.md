@@ -19,7 +19,7 @@
 - 在线模式延时大：方案二，使用FIFA助手锁定中亚（香港）服务器，裸连踢球更流畅。
 
 ## 支持的路由器型号及固件
-路由器型号 | 官方固件<1.2.5 | 官方固件 >= 1.2.5 | 非官方固件 |
+路由器型号 | 官方固件 < 1.2.5 | 1.2.5 <= 官方固件 <= 1.4.11 | 非官方固件 |
 ------------ | ------------- | ------------- | ------------- |
 极1s | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极2 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
