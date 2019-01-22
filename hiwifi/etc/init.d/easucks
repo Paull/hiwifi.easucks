@@ -218,10 +218,8 @@ start() {
         fifa19_iptables_add
     fi
 
-    # 官方dnsmasq重启时自动启动pdnsd
-    uci set dhcp.@dnsmasq[0].honest=1
-    uci commit
     /etc/init.d/dnsmasq restart
+    /etc/init.d/pdnsd restart
 }
 
 stop() {
@@ -240,10 +238,8 @@ stop() {
     rm -f $DNSMASQ_CONFIG_DIR/domain_force.conf
     rm -f $DNSMASQ_CONFIG_DIR/domain_ignore.conf
 
-    # 官方dnsmasq重启时自动重启pdnsd
-    uci delete dhcp.@dnsmasq[0].honest
-    uci commit
     /etc/init.d/dnsmasq restart
+    /etc/init.d/pdnsd stop
 }
 
 fifa19_iptables_add() {
