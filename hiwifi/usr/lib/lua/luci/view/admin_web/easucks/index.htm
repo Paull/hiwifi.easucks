@@ -2,9 +2,9 @@
 --[[
     Info      FIFA助手插件页
     Author    Paull  <paull@qq.com>
-    Copyright 2018
+    Copyright 2019
 ]]--
-local version  = "1.4.10"
+local build  = "20190122"
 local i18n = require "luci.i18n"
 include('admin_web/header')
 
@@ -16,7 +16,7 @@ else
     css_location = resource..'/v2/style/admin_web/net.css';
 end
 %>
-<link rel="stylesheet" type="text/css" href="<%=css_location..'?v='..version%>">
+<link rel="stylesheet" type="text/css" href="<%=css_location..'?b='..build%>">
 <div id="bd">
     <div class="com-main clearfix">
         <div id="right_part" class="G-rightSide">
@@ -88,8 +88,8 @@ end
 </div>
 <% include('admin_web/footer') %>
 <!-- 通用模块的专属js -->
-<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?v=<%=version%>"></script>
+<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/general_module.js?b=<%=build%>"></script>
 <!-- SS插件页的专属js -->
-<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/easucks.js?v=<%=version%>"></script>
+<script type="text/javascript" src="<%=resource%>/v2/js/admin_web/easucks.js?b=<%=build%>"></script>
 </body>
 </html>
