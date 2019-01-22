@@ -214,17 +214,12 @@ start() {
 
     ss_iptables_add
 
-    if [ $(uci get easucks.fifa19_region_lock) == 'HK' ]; then
-        fifa19_iptables_add
-    fi
-
     /etc/init.d/dnsmasq restart
     /etc/init.d/pdnsd restart
 }
 
 stop() {
     ss_iptables_del
-    fifa19_iptables_del
 
     rm -rf $SSCONFIG $PDNSDCONFIG
     if [ -f $PIDFILE ]; then
@@ -242,41 +237,3 @@ stop() {
     /etc/init.d/pdnsd stop
 }
 
-fifa19_iptables_add() {
-    if [ $(iptables-save -t mangle|grep easucks|wc -l) -eq 0 ]; then
-        iptables -t mangle -N $NAME-PREROUTING
-        iptables -t mangle -A PREROUTING -i br-lan -j $NAME-PREROUTING
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 109.200.215.132/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 109.200.215.140/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 109.200.221.170/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 109.200.221.171/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.165.200/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.165.201/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.28.50/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.28.51/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.36.61/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.36.62/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.42.240/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 159.153.42.241/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 169.38.100.162/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 169.38.100.170/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 169.57.76.162/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 169.57.76.171/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 18.184.251.35/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 185.179.200.211/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 185.179.200.226/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 185.179.203.80/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 185.50.104.206/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 185.50.104.221/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 203.195.120.68/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 203.195.122.124/32 -j DROP
-        iptables -t mangle -A $NAME-PREROUTING -p udp -d 52.58.40.163/32 -j DROP
-    fi
-}
-
-fifa19_iptables_del() {
-    iptables -t mangle -D PREROUTING -i br-lan -j $NAME-PREROUTING 1>/dev/null 2>&1
-
-    iptables -t mangle -F $NAME-PREROUTING 1>/dev/null 2>&1
-    iptables -t mangle -X $NAME-PREROUTING 1>/dev/null 2>&1
-}
