@@ -215,7 +215,7 @@ start() {
     ss_iptables_add
 
     /etc/init.d/dnsmasq restart
-    /etc/init.d/pdnsd restart
+    /etc/init.d/pdnsd start
 }
 
 stop() {
