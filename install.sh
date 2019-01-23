@@ -43,6 +43,9 @@ if [ $? -eq 0 ]; then
     opkg update > /dev/null
     echo -n "."
     opkg install pdnsd> /dev/null
+    if [ -f /usr/bin/pdnsd_init ]; then
+        mv /usr/bin/pdnsd_init /etc/init.d/pdnsd
+    fi
     echo -n "."
     opkg install shadowsocks-libev > /dev/null
     echo "."

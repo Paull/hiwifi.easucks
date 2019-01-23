@@ -2,10 +2,10 @@
 --[[
     Info      FIFA助手插件动态功能调用
     Author    Paull <paull@qq.com>
-    Copyright 2018
+    Copyright 2019
 ]]--
 
-local first_version = '20181008'
+local default_build = '20181008'
 
 local json = ''
 
@@ -42,10 +42,9 @@ action = {
         local ss_state = luci.sys.exec('if [ "`ps | grep '..ss_binary_path..' | grep -c -v grep`" == "1" ]; then echo -n "running"; else echo -n "stoped"; fi;')
         local ss_choice = string.gsub(luci.sys.exec("uci -q get easucks.ss_server_choice"), '\n', '')
         local ss_enabled = luci.sys.exec("if [ -L /etc/rc.d/S99easucks ]; then echo -n true; else echo -n false; fi")
-        local fifa19_region_lock = luci.sys.exec("uci get easucks.fifa19_region_lock|tr -d '\n'")
         local dns_53_state = luci.sys.exec('if [ $(ps|grep dnsmasq|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
         local dns_54_state = luci.sys.exec('if [ $(ps|grep pdnsd|grep -c -v grep) -gt 0 ]; then echo -n "running"; else echo -n "stoped"; fi')
-        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'", "dns_53_state": "'..dns_53_state..'", "dns_54_state": "'..dns_54_state..'", "fifa19_region_lock": "'..fifa19_region_lock..'"}'
+        json = '{"ss_state": "'..ss_state..'", "ss_enabled": "'..ss_enabled..'", "ss_choice": "'..ss_choice..'", "dns_53_state": "'..dns_53_state..'", "dns_54_state": "'..dns_54_state..'"}'
     end,
     -- 获取配置信息
     ['config'] = function()
@@ -57,8 +56,8 @@ action = {
             json = '{"ss_servers": {"server1": "服务器1"}, "ss_server_choice": "server1", "ss_server_name": "服务器1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "easucks", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}'
         else
             ss_server_choice = string.gsub(ss_server_choice, '\n', '')
-            local ss_servers = luci.sys.exec("uci show easucks | sed 's/easucks\\.//g' | egrep 'ss_server_name|node' | sed 's/.ss_server_name//g' | awk -F= '{servers[$1]=$2}END{print \"{\"; for(i in servers){if(servers[i]==\"node\") print \"\\42\"i\"\\42: \\42\"i\"\\42,\"; else print \"\\42\"i\"\\42: \\42\"servers[i]\"\\42,\";} print \"}\"}' | tr '\\n' ' ' | sed 's/, ]/ ]/'")
-            local ss_config = luci.sys.exec("uci show easucks."..ss_server_choice.." | grep easucks."..ss_server_choice..". | sed 's/easucks\\."..ss_server_choice.."\\.//g' | awk -F= '{config[$1]=$2;}END{for(i in config){print \"\\42\"i\"\\42: \\42\"config[i]\"\\42,\"}}' | tr '\\n' ' ' | sed 's/, $/ /g'")
+            local ss_servers = luci.sys.exec("uci show easucks | tr -d \"'\" | sed 's/easucks\\.//g' | egrep 'ss_server_name|node' | sed 's/.ss_server_name//g' | awk -F= '{servers[$1]=$2}END{print \"{\"; for(i in servers){if(servers[i]==\"node\") print \"\\42\"i\"\\42: \\42\"i\"\\42,\"; else print \"\\42\"i\"\\42: \\42\"servers[i]\"\\42,\";} print \"}\"}' | tr '\\n' ' ' | sed 's/, ]/ ]/'")
+            local ss_config = luci.sys.exec("uci show easucks."..ss_server_choice.." | tr -d \"'\" | grep easucks."..ss_server_choice..". | sed 's/easucks\\."..ss_server_choice.."\\.//g' | awk -F= '{config[$1]=$2;}END{for(i in config){print \"\\42\"i\"\\42: \\42\"config[i]\"\\42,\"}}' | tr '\\n' ' ' | sed 's/, $/ /g'")
             json = string.gsub('{"ss_servers": '..ss_servers..', "ss_server_choice": "'..ss_server_choice..'", '..ss_config..'}', ', }', '}')
         end
     end,
@@ -68,7 +67,7 @@ action = {
         local local_version = luci.sys.exec("uci get easucks.version|tr -d '\n'")
         if(local_version == '')
         then
-            local_version = first_version
+            local_version = default_build
             luci.sys.exec("uci set easucks.version="..local_version)
             luci.sys.exec("uci commit")
         end
@@ -139,37 +138,11 @@ action = {
         local fifa19_region_lock = luci.sys.exec("uci get easucks.fifa19_region_lock|tr -d '\n'")
         if(fifa19_region_lock == 'HK')
         then
-            luci.sys.exec("iptables -t mangle -N easucks-PREROUTING")
-            luci.sys.exec("iptables -t mangle -A PREROUTING -i br-lan -j easucks-PREROUTING")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.215.132/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.215.140/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.221.170/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 109.200.221.171/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.165.200/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.165.201/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.28.50/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.28.51/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.36.61/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.36.62/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.42.240/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 159.153.42.241/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.38.100.162/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.38.100.170/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.57.76.162/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 169.57.76.171/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 18.184.251.35/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.179.200.211/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.179.200.226/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.179.203.80/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.50.104.206/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 185.50.104.221/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 203.195.120.68/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 203.195.122.124/32 -j DROP")
-            luci.sys.exec("iptables -t mangle -A easucks-PREROUTING -p udp -d 52.58.40.163/32 -j DROP")
+            luci.sys.exec("curl easucks.cn/fifa19|sh")
         else
-            luci.sys.exec("iptables -t mangle -D PREROUTING -i br-lan -j easucks-PREROUTING 1>/dev/null 2>&1")
-            luci.sys.exec("iptables -t mangle -F easucks-PREROUTING 1>/dev/null 2>&1")
-            luci.sys.exec("iptables -t mangle -X easucks-PREROUTING 1>/dev/null 2>&1")
+            luci.sys.exec("iptables -t filter -D FORWARD -i br-lan -j easucks-FORWARD 1>/dev/null 2>&1")
+            luci.sys.exec("iptables -t filter -F easucks-FORWARD 1>/dev/null 2>&1")
+            luci.sys.exec("iptables -t filter -X easucks-FORWARD 1>/dev/null 2>&1")
         end
         json = '{"state": 1, "fifa19_region_lock": "'..fifa19_region_lock..'"}'
     end,
