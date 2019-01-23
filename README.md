@@ -19,13 +19,14 @@
 - 在线模式延时大：方案二，使用FIFA助手锁定中亚（香港）服务器，裸连踢球更流畅。
 
 ## 支持的路由器型号及固件
-路由器型号 | 官方固件 < 1.2.5 | 1.2.5 <= 官方固件 <= 1.4.11 | 非官方固件 |
+路由器型号 | 官方固件 < 1.2.5 | 1.2.5 <= 官方固件 <= 1.5.9 | 非官方固件 |
 ------------ | ------------- | ------------- | ------------- |
 极1s | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极2 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极3 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极4 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极B70 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
+极X | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极Enjoy | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极路由美的 | :heavy_multiplication_x:不支持 | :heavy_check_mark:支持 | :heavy_multiplication_x:不支持 |
 极路由其它 | :heavy_multiplication_x:不支持 | :interrobang:待测 | :heavy_multiplication_x:不支持 |
@@ -86,6 +87,8 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
   - 添加默认强制走代理的几个IP段，加速aws和telegram
 - 1.4.10
   - 新增FIFA19锁服功能
+- 20190123
+  - 已支持极X等1.5.x版本的固件
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
