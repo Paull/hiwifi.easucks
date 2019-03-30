@@ -46,10 +46,10 @@
 - 第四步：安装FIFA助手
   - 在ssh上执行一句话安装指令：`curl easucks.cn|sh`（[截图6](screenshots/06.install.png)）
   
-## 插件升级方法（不支持极路由器X）
+## 插件升级方法
 - 同安装，进ssh执行`curl easucks.cn|sh`
 
-## 加密升级包
+## 加密升级方法（不支持极路由器X,CPU架构不同）
 如需增加chacha20-ietf-poly1305、aes-256-gcm等加密方式：
 - 进ssh执行`curl easucks.cn/ss_update|sh`
 
