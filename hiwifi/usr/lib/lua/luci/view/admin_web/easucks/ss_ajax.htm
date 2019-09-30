@@ -5,7 +5,7 @@
     Copyright 2019
 ]]--
 
-local default_build = '20181008'
+local default_build = '20190930'
 
 local json = ''
 
@@ -130,6 +130,7 @@ action = {
         json = '{"state": 1, "ss_enabled": "'..ss_enabled..'"}'
     end,
     -- FIFA19强制锁中亚服务器
+    -- 临时改成FIFA20足够使用
     ['fifa19_region_lock'] = function()
         region = luci.http.formvalue('region')
         luci.sys.exec('touch '..ss_config_file..';')
@@ -138,7 +139,7 @@ action = {
         local fifa19_region_lock = luci.sys.exec("uci get easucks.fifa19_region_lock|tr -d '\n'")
         if(fifa19_region_lock == 'HK')
         then
-            luci.sys.exec("curl easucks.cn/fifa19|sh")
+            luci.sys.exec("curl easucks.cn/fifa20|sh")
         else
             luci.sys.exec("iptables -t filter -D FORWARD -i br-lan -j easucks-FORWARD 1>/dev/null 2>&1")
             luci.sys.exec("iptables -t filter -F easucks-FORWARD 1>/dev/null 2>&1")
