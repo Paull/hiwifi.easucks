@@ -1,8 +1,8 @@
-# FIFA19锁服功能
+# FIFA20锁服功能已更新
 - 强制锁定中亚（香港）服务器，适用于DR模式、周赛模式以及俱乐部模式（其中俱乐部模式可查看当前所在服务器，[截图8](screenshots/08.likeapro.png)）
 - 锁服功能仅适用于裸连香港服务器延时较低的小伙伴们
-- 裸连延时测试方法：用电脑ping 180.150.147.44，目前国内平均延时50ms左右，属于比较流畅
-- 非极路由玩家可以继续使用[以前的测试脚本](https://github.com/Paull/hiwifi.easucks/issues/77)
+- 裸连延时测试方法：用电脑ping 180.150.147.42，目前国内平均延时50ms左右，属于比较流畅
+- 非极路由玩家可以使用[测试脚本](https://github.com/Paull/hiwifi.easucks/issues/111)
 
 # FIFA助手
 - 目前只是个SS插件而已。
@@ -89,6 +89,8 @@ sed -i '/easucks/d' /usr/lib/lua/luci/view/admin_web/network/index.htm
   - 新增FIFA19锁服功能
 - 20190123
   - 已支持极X等1.5.x版本的固件
+- 20190930
+  - 插件界面的锁中亚按钮从FIFA19改为FIFA20
 
 ## TODO LIST
 - [x] 安装本插件后，极路由仍可以升级固件并自动保留本插件
