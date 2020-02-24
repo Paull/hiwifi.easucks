@@ -5,7 +5,11 @@
     Copyright 2019
 ]]--
 
-local default_build = '20190930'
+local uci = require("uci")
+local cjson = require("cjson")
+x = uci.cursor()
+
+local default_build = '20200224'
 
 local json = ''
 
@@ -56,9 +60,14 @@ action = {
             json = '{"ss_servers": {"server1": "服务器1"}, "ss_server_choice": "server1", "ss_server_name": "服务器1", "ss_server_fsop": "false", "ss_server_meth": "rc4-md5", "ss_server_port": "1717", "ss_local_port": "61717", "ss_remote_dnss": "8.8.4.4", "ss_server_pass": "easucks", "ss_server_ipad": "xxx.xxx.xxx.xxx", "ss_runnin_mode": "gfwlist"}'
         else
             ss_server_choice = string.gsub(ss_server_choice, '\n', '')
-            local ss_servers = luci.sys.exec("uci show easucks | tr -d \"'\" | sed 's/easucks\\.//g' | egrep 'ss_server_name|node' | sed 's/.ss_server_name//g' | awk -F= '{servers[$1]=$2}END{print \"{\"; for(i in servers){if(servers[i]==\"node\") print \"\\42\"i\"\\42: \\42\"i\"\\42,\"; else print \"\\42\"i\"\\42: \\42\"servers[i]\"\\42,\";} print \"}\"}' | tr '\\n' ' ' | sed 's/, ]/ ]/'")
-            local ss_config = luci.sys.exec("uci show easucks."..ss_server_choice.." | tr -d \"'\" | grep easucks."..ss_server_choice..". | sed 's/easucks\\."..ss_server_choice.."\\.//g' | awk -F= '{config[$1]=$2;}END{for(i in config){print \"\\42\"i\"\\42: \\42\"config[i]\"\\42,\"}}' | tr '\\n' ' ' | sed 's/, $/ /g'")
-            json = string.gsub('{"ss_servers": '..ss_servers..', "ss_server_choice": "'..ss_server_choice..'", '..ss_config..'}', ', }', '}')
+            local ss_servers = {}
+            x:foreach("easucks", "node", function(s)
+                ss_servers[s['.name']]=s['ss_server_name']
+            end)
+            local ss_config = x:get_all('easucks', ss_server_choice)
+            ss_config['ss_server_choice'] = ss_server_choice
+            ss_config['ss_servers'] = ss_servers
+            json = cjson.encode(ss_config)
         end
     end,
     -- 获取版本信息
