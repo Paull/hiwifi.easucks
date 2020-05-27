@@ -770,7 +770,7 @@ $(function () {
     	network_test_result.css('color', 'red');
     	network_test_result.text('测试中...');
     	$.post('easucks/ss_ajax', {'act': 'network_test'}, function(data){
-				if(data['code'] != "200"){
+				if(data['code'] != "200" && data['code'] != "302"){
         	network_test_result.text('测试失败');
         }
         else{
