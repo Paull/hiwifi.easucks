@@ -18,7 +18,6 @@ TOOLCHAINDIR=$BASEDIR/staging_dir
 TOOLCHAIN=$TOOLCHAINDIR/toolchain-mipsel_1004kc_gcc-4.8-linaro_uClibc-0.9.33.2
 HOST=${MLIB}-openwrt-linux
 PATH_A=$PATH
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 PATH=$TOOLCHAIN/bin:$PATH
 
 $HOST-gcc -v
